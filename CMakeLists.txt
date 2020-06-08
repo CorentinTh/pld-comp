@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.16)
+project(pld-comp)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(src)
+include_directories(src/antlr)
+
+add_executable(pld-comp
+        src/antlr/IFCCBaseVisitor.cpp
+        src/antlr/IFCCBaseVisitor.h
+        src/antlr/IFCCLexer.cpp
+        src/antlr/IFCCLexer.h
+        src/antlr/IFCCParser.cpp
+        src/antlr/IFCCParser.h
+        src/antlr/IFCCVisitor.cpp
+        src/antlr/IFCCVisitor.h
+        src/CompVisitor.cpp
+        src/CompVisitor.h
+        src/main.cpp)
+
+include(ExternalAntlr4Cpp.cmake)
+include_directories(${ANTLR4_INCLUDE_DIRS})
+
+target_link_libraries(pld-comp antlr4_static)
