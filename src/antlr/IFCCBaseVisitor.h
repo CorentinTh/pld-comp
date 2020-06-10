@@ -23,15 +23,35 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInst(IFCCParser::InstContext *ctx) override {
+  virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitIdentExpr(IFCCParser::IdentExprContext *ctx) override {
+  virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitReturnExpr(IFCCParser::ReturnExprContext *ctx) override {
+  virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *ctx) override {
     return visitChildren(ctx);
   }
 

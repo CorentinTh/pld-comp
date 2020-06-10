@@ -25,7 +25,7 @@ null
 null
 null
 null
-RETURN
+null
 CONST
 IDENTIFIER
 COMMENT
@@ -41,7 +41,7 @@ T__4
 T__5
 T__6
 T__7
-RETURN
+T__8
 CONST
 IDENTIFIER
 COMMENT

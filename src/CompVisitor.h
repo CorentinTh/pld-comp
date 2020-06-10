@@ -1,13 +1,23 @@
 #include "antlr/IFCCVisitor.h"
 
 class CompVisitor : public IFCCVisitor {
-    virtual antlrcpp::Any visitAxiom(IFCCParser::AxiomContext *context) override;
+    virtual antlrcpp::Any visitAxiom(IFCCParser::AxiomContext *ctx) override;
 
-    virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *context) override;
+    virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *ctx) override;
 
-    virtual antlrcpp::Any visitInst(IFCCParser::InstContext *context) override;
+    virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override;
 
-    virtual antlrcpp::Any visitIdentExpr(IFCCParser::IdentExprContext *context) override;
+    virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitReturnExpr(IFCCParser::ReturnExprContext *context) override;
+    virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override;
+
+    virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override;
+
+    virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override;
+
+    virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *ctx) override;
+
+    virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) override;
+
+    virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *ctx) override;
 };

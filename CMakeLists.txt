@@ -17,6 +17,8 @@ add_executable(pld-comp
         src/antlr/IFCCVisitor.h
         src/CompVisitor.cpp
         src/CompVisitor.h
+        src/ASSM.h
+        src/ASSM.cpp
         src/main.cpp)
 
 include(ExternalAntlr4Cpp.cmake)

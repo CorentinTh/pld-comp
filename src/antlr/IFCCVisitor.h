@@ -23,11 +23,21 @@ public:
 
     virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *context) = 0;
 
-    virtual antlrcpp::Any visitInst(IFCCParser::InstContext *context) = 0;
+    virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *context) = 0;
 
-    virtual antlrcpp::Any visitIdentExpr(IFCCParser::IdentExprContext *context) = 0;
+    virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *context) = 0;
 
-    virtual antlrcpp::Any visitReturnExpr(IFCCParser::ReturnExprContext *context) = 0;
+    virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) = 0;
+
+    virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *context) = 0;
+
+    virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *context) = 0;
+
+    virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *context) = 0;
+
+    virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *context) = 0;
+
+    virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *context) = 0;
 
 
 };

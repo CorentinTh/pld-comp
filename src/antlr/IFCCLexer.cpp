@@ -61,7 +61,7 @@ std::vector<uint16_t> IFCCLexer::_serializedATN;
 
 std::vector<std::string> IFCCLexer::_ruleNames = {
   u8"T__0", u8"T__1", u8"T__2", u8"T__3", u8"T__4", u8"T__5", u8"T__6", 
-  u8"T__7", u8"RETURN", u8"CONST", u8"IDENTIFIER", u8"COMMENT", u8"DIRECTIVE", 
+  u8"T__7", u8"T__8", u8"CONST", u8"IDENTIFIER", u8"COMMENT", u8"DIRECTIVE", 
   u8"WS"
 };
 
@@ -79,8 +79,8 @@ std::vector<std::string> IFCCLexer::_literalNames = {
 };
 
 std::vector<std::string> IFCCLexer::_symbolicNames = {
-  "", "", "", "", "", "", "", "", "", u8"RETURN", u8"CONST", u8"IDENTIFIER", 
-  u8"COMMENT", u8"DIRECTIVE", u8"WS"
+  "", "", "", "", "", "", "", "", "", "", u8"CONST", u8"IDENTIFIER", u8"COMMENT", 
+  u8"DIRECTIVE", u8"WS"
 };
 
 dfa::Vocabulary IFCCLexer::_vocabulary(_literalNames, _symbolicNames);
