@@ -33,13 +33,11 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitInstruction(IFCCParser::InstructionContext *ctx) {
-    string out = visit(ctx->expression()).as<std::string>();
-    return out;
+    return visit(ctx->expression());
 }
 
 antlrcpp::Any CompVisitor::visitExpression(IFCCParser::ExpressionContext *ctx) {
-    string out =  visit(ctx->declaration()).as<std::string>();
-    return out;
+    return visit(ctx->children.at(0));
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
@@ -51,7 +49,6 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) {
-    cout << "Declaration const called" << endl;
     const string variableName = ctx->IDENTIFIER()->getText();
     const int currentMapSize = variableAddressMap.size();
     const string variableAddress = to_string((currentMapSize + 1) * 4);
@@ -77,7 +74,7 @@ antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstCon
     const int constValue = stoi(ctx->CONST()->getText());
     const string variableAddress = variableAddressMap.find(variableName)->second;
 
-    return NULL;
+    return "";
 }
 
 antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) {
