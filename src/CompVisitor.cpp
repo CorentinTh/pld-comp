@@ -13,6 +13,18 @@ bool variableExists(string variableName) {
     return variableAddressMap.find(variableName) != variableAddressMap.end();
 }
 
+string getAddress(string variableName) {
+    return variableAddressMap.find(variableName)->second;
+}
+
+string getNextAddress() {
+    return to_string((variableAddressMap.size() + 1) * 4);
+}
+
+void putVariableAtAddress(string variableName, string variableAddress) {
+    variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
+}
+
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
     string out = ".text\n";
     out.append(".global main\n");
@@ -29,7 +41,7 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     // Instructions
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
-        if(visited.isNotNull()) {
+        if (visited.isNotNull()) {
             out.append(WHITESPACE + visited.as<std::string>() + "\n");
         }
     }
@@ -53,12 +65,12 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
     const string variableName = ctx->IDENTIFIER()->getText();
 
     //Check if the variable is already defined
-    if(variableExists(variableName)) {
-        cout << "Variable "+variableName+" is already defined" << endl;
+    if (variableExists(variableName)) {
+        cout << "Variable " + variableName + " is already defined" << endl;
         return nullptr;
     }
-    const string variableAddress = to_string((variableAddressMap.size() + 1) * 4);
-    variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
+    const string variableAddress = getNextAddress();
+    putVariableAtAddress(variableName, variableAddress);
 
     return nullptr;
 }
@@ -67,12 +79,12 @@ antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstCon
     const string variableName = ctx->IDENTIFIER()->getText();
 
     //Check if the variable is already defined
-    if(variableExists(variableName)) {
-        cout << "Variable "+variableName+" is already defined" << endl;
-        return nullptr;
+    if (variableExists(variableName)) {
+        cout << "Variable " + variableName + " is already defined" << endl;
+        exit(0);
     }
-    const string variableAddress = to_string((variableAddressMap.size() + 1) * 4);
-    variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
+    const string variableAddress = getNextAddress();
+    putVariableAtAddress(variableName, variableAddress);
 
     return assm.constToAddr(ctx->CONST()->getText(), variableAddress);
 }
@@ -92,12 +104,12 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
     }
         //Insert variable into the map
     else {
-        variableAddressMap.insert(pair<string, string>(leftVariableIdentifier, leftVariableAddress));
+        putVariableAtAddress(leftVariableIdentifier, leftVariableAddress);
     }
 
     //Check if right variable exists
     if (variableExists(rightVariableIdentifier)) {
-        const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->second;
+        const string rightVariableAddress = getAddress(rightVariableIdentifier);
         // Move address if the RHS variable to a register
         out.append(assm.addrToRegister(rightVariableAddress, "%eax"));
         // Move value from the register to the left variable
@@ -107,7 +119,6 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
         cout << "Variable " + rightVariableIdentifier + " is not defined" << endl;
         return nullptr;
     }
-
 }
 
 antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) {
@@ -122,8 +133,8 @@ antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIde
         cout << "Variable " + rightVariableIdentifier + " does not exist" << endl;
         return nullptr;
     }
-    const string leftVariableAddress = variableAddressMap.find(leftVariableIdentifier)->second;
-    const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->second;
+    const string leftVariableAddress = getAddress(leftVariableIdentifier);
+    const string rightVariableAddress = getAddress(rightVariableIdentifier);
 
     string out = assm.addrToRegister(rightVariableAddress, ASSM::REGISTER_A);
     out.append("\n" + WHITESPACE);
@@ -139,7 +150,7 @@ antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstCon
         return nullptr;
     }
     const string constValue = ctx->CONST()->getText();
-    const string variableAddress = variableAddressMap.find(variableName)->second;
+    const string variableAddress = getAddress(variableName);
 
     return assm.constToAddr(constValue, variableAddress);
 }
@@ -150,7 +161,7 @@ antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierCon
         cout << "Variable " + variableName + " does not exist" << endl;
         return nullptr;
     }
-    const string variableAddress = variableAddressMap.find(variableName)->second;
+    const string variableAddress = getAddress(variableName);
 
     return assm.addrToRegister(variableAddress, ASSM::REGISTER_RETURN);
 }
