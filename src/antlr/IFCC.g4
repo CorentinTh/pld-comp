@@ -3,15 +3,27 @@ grammar IFCC;
 axiom : prog
       ;
 
-prog : 'int' 'main' '(' ')' '{' inst* '}' ;
+prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
 
-inst: expr ';' ;
+instruction: expression ';' ;
 
-expr: 'int' IDENTIFIER '=' CONST #identExpr
-    | RETURN IDENTIFIER #returnExpr
+expression: declaration
+    | affectation
+    | returnExpr
     ;
 
-RETURN : 'return' ;
+declaration: 'int' IDENTIFIER           #declarationEmpty
+           | 'int' IDENTIFIER '=' CONST   #declarationConst
+           ;
+
+affectation: IDENTIFIER '=' IDENTIFIER  #affectationIdentifier
+           | IDENTIFIER '=' CONST       #affectationConst
+           ;
+
+returnExpr: 'return' IDENTIFIER             #returnIdentifier
+      | 'return' CONST                  #returnConst
+      ;
+
 CONST : [0-9]+ ;
 IDENTIFIER: [a-zA-Z]+ ;
 COMMENT : '/*' .*? '*/' -> skip ;
