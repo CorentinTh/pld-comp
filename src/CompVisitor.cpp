@@ -51,6 +51,7 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) {
+    cout << "Declaration const called" << endl;
     const string variableName = ctx->IDENTIFIER()->getText();
     const int currentMapSize = variableAddressMap.size();
     const string variableAddress = to_string((currentMapSize + 1) * 4);
