@@ -25,7 +25,10 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     out.append(WHITESPACE + "pushq %rbp\n");
     out.append(WHITESPACE + "movq %rsp, %rbp\n");
     for (int i = 0; i < ctx->instruction().size(); i++) {
-        out.append(visit(ctx->instruction(i)).as<std::string>() + "\n");
+        antlrcpp::Any visited = visit(ctx->instruction(i));
+        if(visited.isNotNull()) {
+            out.append(visited.as<std::string>() + "\n");
+        }
     }
     out.append(WHITESPACE + "popq %rbp\n");
     out.append(WHITESPACE + "ret\n");
@@ -45,7 +48,8 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
     const int currentMapSize = variableAddressMap.size();
     const string variableAddress = to_string((currentMapSize + 1) * 4);
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
-    return "";
+
+    return nullptr;
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) {
@@ -53,7 +57,8 @@ antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstCon
     const int currentMapSize = variableAddressMap.size();
     const string variableAddress = to_string((currentMapSize + 1) * 4);
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
-    string out = WHITESPACE + "movl $" + ctx->CONST()->getText() + ", -" + variableAddress + "(%rbp)\n";
+
+    string out = WHITESPACE + "movl $" + ctx->CONST()->getText() + ", -" + variableAddress + "(%rbp)";
     return out;
 }
 
