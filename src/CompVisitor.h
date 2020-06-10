@@ -13,6 +13,8 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override;
 
+    virtual antlrcpp::Any visitDeclarationAssign(IFCCParser::DeclarationAssignContext *ctx) override;
+
     virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override;
 
     virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *ctx) override;

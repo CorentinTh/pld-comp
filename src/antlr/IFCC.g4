@@ -14,6 +14,7 @@ expression: declaration
 
 declaration: 'int' IDENTIFIER           #declarationEmpty
            | 'int' IDENTIFIER '=' CONST   #declarationConst
+           | 'int' IDENTIFIER '=' IDENTIFIER #declarationAssign
            ;
 
 affectation: IDENTIFIER '=' IDENTIFIER  #affectationIdentifier

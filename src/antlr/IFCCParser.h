@@ -104,6 +104,15 @@ public:
    
   };
 
+  class  DeclarationAssignContext : public DeclarationContext {
+  public:
+    DeclarationAssignContext(DeclarationContext *ctx);
+
+    std::vector<antlr4::tree::TerminalNode *> IDENTIFIER();
+    antlr4::tree::TerminalNode* IDENTIFIER(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  DeclarationConstContext : public DeclarationContext {
   public:
     DeclarationConstContext(DeclarationContext *ctx);
