@@ -1,37 +1,39 @@
 #include <string>
-#include <iostream>
 #include <map>
 #include "CompVisitor.h"
+#include "ASSM.h"
 
 using namespace std;
 
 const string WHITESPACE = "  ";
-const string BASE_POINTER = "%rbp";
-const string REGISTER_A = "%eax";
-const string REGISTER_B = "%ebx";
-const string REGISTER_C = "%ecx";
-
 map<string, string> variableAddressMap;
+ASSM assm;
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out = ".text  #declaration of 'text' section\n";
-    out.append(".global main #entry point to the ELF linker or loader\n");
+    string out = ".text\n";
+    out.append(".global main\n");
     out.append(visit(ctx->prog()).as<std::string>());
     return out;
 }
 
 antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
+    // Prologue
     string out = "main:\n";
     out.append(WHITESPACE + "pushq %rbp\n");
     out.append(WHITESPACE + "movq %rsp, %rbp\n");
+
+    // Instructions
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
         if(visited.isNotNull()) {
-            out.append(visited.as<std::string>() + "\n");
+            out.append(WHITESPACE + visited.as<std::string>() + "\n");
         }
     }
+
+    // Epilogue
     out.append(WHITESPACE + "popq %rbp\n");
     out.append(WHITESPACE + "ret\n");
+
     return out;
 }
 
@@ -45,8 +47,7 @@ antlrcpp::Any CompVisitor::visitExpression(IFCCParser::ExpressionContext *ctx) {
 
 antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
-    const int currentMapSize = variableAddressMap.size();
-    const string variableAddress = to_string((currentMapSize + 1) * 4);
+    const string variableAddress = to_string((variableAddressMap.size() + 1) * 4);
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
 
     return nullptr;
@@ -54,12 +55,10 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
 
 antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
-    const int currentMapSize = variableAddressMap.size();
-    const string variableAddress = to_string((currentMapSize + 1) * 4);
+    const string variableAddress = to_string((variableAddressMap.size() + 1) * 4);
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
 
-    string out = WHITESPACE + "movl $" + ctx->CONST()->getText() + ", -" + variableAddress + "(%rbp)";
-    return out;
+    return assm.constToAddr(ctx->CONST()->getText(), variableAddress);
 }
 
 antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) {
@@ -69,8 +68,9 @@ antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIde
     const string leftVariableAddress = variableAddressMap.find(leftVariableIdentifier)->second;
     const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->second;
 
-    string out = WHITESPACE + "movl -" + rightVariableAddress + "(" + BASE_POINTER + ") , " + REGISTER_A + "\n";
-    out.append(WHITESPACE + "movl " + REGISTER_A + ", -" + leftVariableAddress + "(" + BASE_POINTER + ")");
+    string out = assm.addrToRegister(rightVariableAddress, ASSM::REGISTER_A);
+    out.append("\n" + WHITESPACE);
+    out.append(assm.registerToAddr(ASSM::REGISTER_A, leftVariableAddress));
     return out;
 }
 
@@ -79,19 +79,18 @@ antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstCon
     const string constValue = ctx->CONST()->getText();
     const string variableAddress = variableAddressMap.find(variableName)->second;
 
-    string out = WHITESPACE + "movl $" + ctx->CONST()->getText() + ", -" + variableAddress + "(%rbp)";
-    return out;
+    return assm.constToAddr(constValue, variableAddress);
 }
 
 antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
     const string variableAddress = variableAddressMap.find(variableName)->second;
-    string out = WHITESPACE + "movl -" + variableAddress + "(%rbp), %eax";
-    return out;
+
+    return assm.addrToRegister(variableAddress, ASSM::REGISTER_RETURN);
 }
 
 antlrcpp::Any CompVisitor::visitReturnConst(IFCCParser::ReturnConstContext *ctx) {
     const string constValue = ctx->CONST()->getText();
-    string out = WHITESPACE + "movl $" + constValue + ", %" + REGISTER_A;
-    return out;
+
+    return assm.constToRegister(constValue, ASSM::REGISTER_RETURN);
 }
