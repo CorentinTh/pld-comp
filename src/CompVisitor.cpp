@@ -1,26 +1,41 @@
+#include <string>
+#include <iostream>
 #include "CompVisitor.h"
 
+using namespace std;
+
+const string WHITESPACE = "  ";
+
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    return visit(ctx->prog());
+    string out = ".text  #declaration of 'text' section\n";
+    out.append(".global main #entry point to the ELF linker or loader\n");
+    out.append(visit(ctx->prog()).as<std::string>());
+    return out;
 }
 
 antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
-    std::string out = "int main() {\n";
+    string out = "main:\n";
+    out.append(WHITESPACE + "pushq %rbp\n");
+    out.append(WHITESPACE + "movq %rsp, %rbp\n");
     for(int i = 0; i < ctx->inst().size(); i++) {
-        out += visit(ctx->inst(i)).as<std::string>() + "\n";
+        out.append(visit(ctx->inst(i)).as<std::string>() + "\n");
     }
-    return out + "}";
+    out.append(WHITESPACE+ "popq %rbp\n");
+    out.append(WHITESPACE + "ret");
+    return out;
 }
 
 antlrcpp::Any CompVisitor::visitInst(IFCCParser::InstContext *ctx) {
-    std::string out = visit(ctx->expr()).as<std::string>() + ";";
+    string out = visit(ctx->expr()).as<std::string>();
     return out;
 }
 
 antlrcpp::Any CompVisitor::visitIdentExpr(IFCCParser::IdentExprContext *ctx) {
-    return "int " + ctx->IDENTIFIER()->getText() + " = " + ctx->CONST()->getText();
+    string out = WHITESPACE + "movl $"+ctx->CONST()->getText()+", -4(%rbp)\n";
+    return out;
 }
 
 antlrcpp::Any CompVisitor::visitReturnExpr(IFCCParser::ReturnExprContext *ctx) {
-    return "return " + ctx->IDENTIFIER()->getText();
+    string out = WHITESPACE + "movl -4(%rbp), %eax\n";
+    return out;
 }
