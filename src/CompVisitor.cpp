@@ -61,26 +61,27 @@ antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIde
     const string leftVariableIdentifier = ctx->IDENTIFIER(0)->getText();
     const string rightVariableIdentifier = ctx->IDENTIFIER(1)->getText();
 
-    const string leftVariableAddress = variableAddressMap.find(leftVariableIdentifier)->first;
-    const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->first;
+    const string leftVariableAddress = variableAddressMap.find(leftVariableIdentifier)->second;
+    const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->second;
 
     string out = WHITESPACE + "movl -" + rightVariableAddress + "(" + BASE_POINTER + ") , " + REGISTER_A + "\n";
-    out.append(WHITESPACE + "movl " + REGISTER_A + ", -" + leftVariableAddress + "(" + BASE_POINTER + ")\n");
+    out.append(WHITESPACE + "movl " + REGISTER_A + ", -" + leftVariableAddress + "(" + BASE_POINTER + ")");
     return out;
 }
 
 antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
-    const int constValue = stoi(ctx->CONST()->getText());
+    const string constValue = ctx->CONST()->getText();
     const string variableAddress = variableAddressMap.find(variableName)->second;
 
-    return "";
+    string out = WHITESPACE + "movl $" + ctx->CONST()->getText() + ", -" + variableAddress + "(%rbp)";
+    return out;
 }
 
 antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
     const string variableAddress = variableAddressMap.find(variableName)->second;
-    string out = WHITESPACE + "movl -" + variableAddress + "(%rbp), %eax\n";
+    string out = WHITESPACE + "movl -" + variableAddress + "(%rbp), %eax";
     return out;
 }
 
