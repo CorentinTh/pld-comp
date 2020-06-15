@@ -1,4 +1,4 @@
-name: Assignment By Variable (int a = b)
+name: Should return SUCCESS for assignment by variable
 command: ./cmake-build-debug/pld-comp {file1}
 assets:
 - type: file

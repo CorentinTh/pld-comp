@@ -1,0 +1,11 @@
+name: Should return ERROR for assignment to non-declared variable
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+- type: file
+  name: file1
+  content: |-
+    int main() {
+     a = 42;
+    }
+expect:
+  status: 1

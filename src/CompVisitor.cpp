@@ -55,7 +55,7 @@ antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstCon
     //Check if the variable is already defined
     if (variableManager.variableExists(variableName)) {
         logger.error("Variable " + variableName + " is already defined");
-        exit(0);
+        exit(EXIT_FAILURE);
     }
     const string variableAddress = variableManager.getNextAddress();
     variableManager.putVariableAtAddress(variableName, variableAddress);
@@ -73,7 +73,7 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
     //Check if left side variable is already assigned, if yes throw an error
     if (variableManager.variableExists(leftVariableIdentifier)) {
         logger.error("Variable " + leftVariableIdentifier + " is already defined");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
         //Insert variable into the map
     else {
@@ -92,7 +92,7 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
         return out;
     } else {
         logger.error("Variable " + rightVariableIdentifier + " is not defined");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -103,6 +103,7 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiCon
             const string variableName = ctx->IDENTIFIER(i)->getText();
             if (variableManager.variableExists(variableName)) {
                 logger.error("Variable " + variableName + " is already defined");
+                exit(EXIT_FAILURE);
             } else {
                 const string variableAddress = variableManager.getNextAddress();
                 variableManager.putVariableAtAddress(variableName, variableAddress);
@@ -118,11 +119,11 @@ antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIde
 
     if (!variableManager.variableExists(leftVariableIdentifier)) {
         logger.error("Variable " + leftVariableIdentifier + " does not exist");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
     if (!variableManager.variableExists(rightVariableIdentifier)) {
         logger.error("Variable " + rightVariableIdentifier + " does not exist");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
     const string leftVariableAddress = variableManager.getAddress(leftVariableIdentifier);
     const string rightVariableAddress = variableManager.getAddress(rightVariableIdentifier);
@@ -138,7 +139,7 @@ antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstCon
 
     if (!variableManager.variableExists(variableName)) {
         logger.error("Variable " + variableName + " does not exist");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
     const string constValue = ctx->CONST()->getText();
     const string variableAddress = variableManager.getAddress(variableName);
@@ -150,7 +151,7 @@ antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierCon
     const string variableName = ctx->IDENTIFIER()->getText();
     if (!variableManager.variableExists(variableName)) {
         logger.error("Variable " + variableName + " does not exist");
-        return nullptr;
+        exit(EXIT_FAILURE);
     }
     const string variableAddress = variableManager.getAddress(variableName);
 

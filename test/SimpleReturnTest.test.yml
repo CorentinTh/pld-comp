@@ -1,4 +1,4 @@
-name: Simple return
+name: Should return SUCCESS for simple return
 command: ./cmake-build-debug/pld-comp {file1}
 assets:
 - type: file
