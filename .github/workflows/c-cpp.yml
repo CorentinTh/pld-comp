@@ -16,5 +16,5 @@ jobs:
     - name: Setup tools
       run: sudo apt-get install uuid-dev pkg-config
     - name: Compile
-      run: cmake
+      run: cmake .
 
