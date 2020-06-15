@@ -13,8 +13,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2-beta
+      with:
+        node-version: '14'
     - name: Setup tools
       run: sudo apt-get install uuid-dev pkg-config
     - name: Compile
-      run: cmake .
+      run:
+        - cmake . -B cmake-build-debug
+        - cd cmake-build-debug
+        - make
+        - cd ..
+    - name: Unit test
+      run: npx comest
 
