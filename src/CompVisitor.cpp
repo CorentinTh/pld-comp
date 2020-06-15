@@ -38,10 +38,10 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitInstruction(IFCCParser::InstructionContext *ctx) {
-    return visit(ctx->expression());
+    return visit(ctx->action());
 }
 
-antlrcpp::Any CompVisitor::visitExpression(IFCCParser::ExpressionContext *ctx) {
+antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
     return visit(ctx->children.at(0));
 }
 
@@ -53,44 +53,69 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyCon
     return nullptr;
 }
 
-antlrcpp::Any CompVisitor::visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) {
+antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
     const string variableAddress = to_string((variableAddressMap.size() + 1) * 4);
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
 
-    return assm.constToAddr(ctx->CONST()->getText(), variableAddress);
+    // TODO: better expression parsing
+    const string expression = visit(ctx->expr()).as<string>();
+    return assm.constToAddr(expression, variableAddress);
 }
 
-antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) {
-    const string leftVariableIdentifier = ctx->IDENTIFIER(0)->getText();
-    const string rightVariableIdentifier = ctx->IDENTIFIER(1)->getText();
+antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
+    // TODO: better expression parsing
+    const string variable = ctx->IDENTIFIER()->getText();
+    const string variableAddress = variableAddressMap.find(variable)->second;
+    const string expression = visit(ctx->expr()).as<string>();
 
-    const string leftVariableAddress = variableAddressMap.find(leftVariableIdentifier)->second;
-    const string rightVariableAddress = variableAddressMap.find(rightVariableIdentifier)->second;
+    string out;
+    const bool isConst = isdigit(expression.at(0)); // TODO: to be changed
 
-    string out = assm.addrToRegister(rightVariableAddress, ASSM::REGISTER_A);
-    out.append("\n" + WHITESPACE);
-    out.append(assm.registerToAddr(ASSM::REGISTER_A, leftVariableAddress));
+    if(isConst) {
+        out = assm.constToAddr(expression, variableAddress);
+    } else {
+        string rightVariableAddress = variableAddressMap.find(expression)->second;
+        out = assm.addrToRegister(rightVariableAddress, ASSM::REGISTER_A);
+        out.append("\n" + WHITESPACE);
+        out.append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    }
+
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitAffectationConst(IFCCParser::AffectationConstContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
-    const string constValue = ctx->CONST()->getText();
-    const string variableAddress = variableAddressMap.find(variableName)->second;
+antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
+    // TODO: better expression parsing
+    const string expression = visit(ctx->expr()).as<string>();
+    const bool isConst = isdigit(expression.at(0)); // TODO: to be changed
 
-    return assm.constToAddr(constValue, variableAddress);
+    string out;
+    if(isConst) {
+        out = assm.constToRegister(expression, ASSM::REGISTER_RETURN);
+    } else {
+        const string variableAddress = variableAddressMap.find(expression)->second;
+        out = assm.addrToRegister(variableAddress, ASSM::REGISTER_RETURN);
+    }
+
+    return out;
 }
 
-antlrcpp::Any CompVisitor::visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
-    const string variableAddress = variableAddressMap.find(variableName)->second;
-
-    return assm.addrToRegister(variableAddress, ASSM::REGISTER_RETURN);
+antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
+    // TODO: use AST
+    return ctx->IDENTIFIER()->getText();
 }
 
-antlrcpp::Any CompVisitor::visitReturnConst(IFCCParser::ReturnConstContext *ctx) {
-    const string constValue = ctx->CONST()->getText();
+antlrcpp::Any CompVisitor::visitConst(IFCCParser::ConstContext *ctx) {
+    // TODO: use AST
+    return ctx->CONST()->getText();
+}
 
-    return assm.constToRegister(constValue, ASSM::REGISTER_RETURN);
+antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx) {
+    // TODO: use AST
+    return "(" + visit(ctx->expr()).as<string>() + ")";
+}
+
+antlrcpp::Any CompVisitor::visitOperation(IFCCParser::OperationContext *ctx) {
+    // TODO: user AST
+    return visit(ctx->expr(0)).as<string>() + ctx->OPERATOR()->getText() + visit(ctx->expr(1)).as<string>();
 }

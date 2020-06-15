@@ -5,27 +5,30 @@ axiom : prog
 
 prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
 
-instruction: expression ';' ;
+instruction: action ';' ;
 
-expression: declaration
-    | affectation
-    | returnExpr
-    ;
-
-declaration: 'int' IDENTIFIER           #declarationEmpty
-           | 'int' IDENTIFIER '=' CONST   #declarationConst
-           ;
-
-affectation: IDENTIFIER '=' IDENTIFIER  #affectationIdentifier
-           | IDENTIFIER '=' CONST       #affectationConst
-           ;
-
-returnExpr: 'return' IDENTIFIER             #returnIdentifier
-      | 'return' CONST                  #returnConst
+action: declaration
+      | affectation
+      | returnAct
       ;
+
+declaration: 'int' IDENTIFIER           # declarationEmpty
+           | 'int' IDENTIFIER '=' expr  # declarationAffectation
+           ;
+
+affectation: IDENTIFIER '=' expr ;
+
+returnAct: 'return' expr ;
+
+expr: expr OPERATOR expr                # operation
+    | CONST                             # const
+    | IDENTIFIER                        # identifier
+    | '(' expr ')'                      # parenthesis
+    ;
 
 CONST : [0-9]+ ;
 IDENTIFIER: [a-zA-Z]+ ;
+OPERATOR : [+\-*/];
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
