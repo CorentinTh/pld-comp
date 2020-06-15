@@ -121,6 +121,22 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
     }
 }
 
+antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) {
+    // Instructions
+    for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+        if (ctx->IDENTIFIER(i) != nullptr) {
+            const string variableName = ctx->IDENTIFIER(i)->getText();
+            if (variableExists(variableName)) {
+                cout << "Variable " + variableName + " is already defined" << endl;
+            } else {
+                const string variableAddress = getNextAddress();
+                putVariableAtAddress(variableName, variableAddress);
+            }
+        }
+    }
+    return nullptr;
+}
+
 antlrcpp::Any CompVisitor::visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) {
     const string leftVariableIdentifier = ctx->IDENTIFIER(0)->getText();
     const string rightVariableIdentifier = ctx->IDENTIFIER(1)->getText();

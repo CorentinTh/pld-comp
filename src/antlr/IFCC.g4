@@ -13,7 +13,8 @@ expression: declaration
     ;
 
 declaration: 'int' IDENTIFIER           #declarationEmpty
-           | 'int' IDENTIFIER '=' CONST   #declarationConst
+           | 'int' IDENTIFIER (',' IDENTIFIER)*   #declarationMulti
+           | 'int' IDENTIFIER CONST   #declarationConst
            | 'int' IDENTIFIER '=' IDENTIFIER #declarationAssign
            ;
 
@@ -30,3 +31,4 @@ IDENTIFIER: [a-zA-Z]+ ;
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
+ASSIGNMENT_OPERATOR: '=';

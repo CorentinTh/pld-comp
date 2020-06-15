@@ -29,6 +29,8 @@ public:
 
     virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) = 0;
 
+    virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *context) = 0;
+
     virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *context) = 0;
 
     virtual antlrcpp::Any visitDeclarationAssign(IFCCParser::DeclarationAssignContext *context) = 0;
