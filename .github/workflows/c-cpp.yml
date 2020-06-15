@@ -19,11 +19,11 @@ jobs:
     - name: Setup tools
       run: sudo apt-get install uuid-dev pkg-config
     - name: Compile
-      run:
-        - cmake . -B cmake-build-debug
-        - cd cmake-build-debug
-        - make
-        - cd ..
+      run: |
+        cmake . -B cmake-build-debug
+        cd cmake-build-debug
+        make
+        cd ..
     - name: Unit test
       run: npx comest
 
