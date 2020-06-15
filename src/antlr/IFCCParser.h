@@ -133,14 +133,6 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
-  class  DeclarationEmptyContext : public DeclarationContext {
-  public:
-    DeclarationEmptyContext(DeclarationContext *ctx);
-
-    antlr4::tree::TerminalNode *IDENTIFIER();
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
   DeclarationContext* declaration();
 
   class  AffectationContext : public antlr4::ParserRuleContext {
