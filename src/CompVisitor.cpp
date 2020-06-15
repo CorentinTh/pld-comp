@@ -2,6 +2,7 @@
 #include <map>
 #include "CompVisitor.h"
 #include "ASSM.h"
+#include "AST.h"
 
 using namespace std;
 
@@ -101,21 +102,29 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
-    // TODO: use AST
-    return ctx->IDENTIFIER()->getText();
+    ASTIdentifier* node = new ASTIdentifier;
+    node->identifier = ctx->IDENTIFIER()->getText();
+    return (ASTNode*) node;
 }
 
 antlrcpp::Any CompVisitor::visitConst(IFCCParser::ConstContext *ctx) {
-    // TODO: use AST
-    return ctx->CONST()->getText();
+    ASTValue* node = new ASTValue;
+    node->value = ctx->CONST()->getText();
+    return (ASTNode*) node;
 }
 
 antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx) {
-    // TODO: use AST
-    return "(" + visit(ctx->expr()).as<string>() + ")";
+    // TODO: handle parenthesis
+    return visit(ctx->expr()).as<ASTNode*>();
 }
 
 antlrcpp::Any CompVisitor::visitOperation(IFCCParser::OperationContext *ctx) {
-    // TODO: user AST
-    return visit(ctx->expr(0)).as<string>() + ctx->OPERATOR()->getText() + visit(ctx->expr(1)).as<string>();
+    ASTExpr* node = new ASTExpr;
+
+    node->op = ctx->OPERATOR()->getText();
+    node->left = visit(ctx->expr(0)).as<ASTNode*>();
+    node->right = visit(ctx->expr(1)).as<ASTNode*>();
+
+
+    return (ASTNode*)  node;
 }

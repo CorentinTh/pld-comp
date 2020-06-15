@@ -1,0 +1,27 @@
+name: Double affectation
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+          int a = 42;
+          int b = 98;
+          b = a;
+          return b;
+      }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $42, -4(%rbp)
+      movl $98, -8(%rbp)
+      movl -4(%rbp), %eax
+      movl %eax, -8(%rbp)
+      movl -8(%rbp), %eax
+      popq %rbp
+      ret

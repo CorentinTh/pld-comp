@@ -19,7 +19,7 @@ add_executable(pld-comp
         src/CompVisitor.h
         src/ASSM.h
         src/ASSM.cpp
-        src/main.cpp)
+        src/main.cpp src/AST.cpp src/AST.h)
 
 include(ExternalAntlr4Cpp.cmake)
 include_directories(${ANTLR4_INCLUDE_DIRS})
