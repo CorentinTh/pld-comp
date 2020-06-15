@@ -25,19 +25,23 @@ public:
 
     virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *context) = 0;
 
-    virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *context) = 0;
+    virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *context) = 0;
 
     virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) = 0;
 
-    virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *context) = 0;
+    virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *context) = 0;
 
-    virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *context) = 0;
+    virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *context) = 0;
 
-    virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *context) = 0;
+    virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) = 0;
 
-    virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *context) = 0;
+    virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *context) = 0;
 
-    virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *context) = 0;
+    virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;
+
+    virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) = 0;
+
+    virtual antlrcpp::Any visitOperation(IFCCParser::OperationContext *context) = 0;
 
 
 };
