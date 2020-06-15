@@ -1,0 +1,20 @@
+name: Simple return
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+- type: file
+  name: file1
+  content: |-
+    int main() {
+      return 42;
+    }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $42, %eax
+      popq %rbp
+      ret

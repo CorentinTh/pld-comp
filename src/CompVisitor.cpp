@@ -85,6 +85,8 @@ antlrcpp::Any CompVisitor::visitDeclarationAssign(IFCCParser::DeclarationAssignC
         const string rightVariableAddress = variableManager.getAddress(rightVariableIdentifier);
         // Move address if the RHS variable to a register
         out.append(assm.addrToRegister(rightVariableAddress, "%eax"));
+        //Add line because we're returning two instructions
+        out.append("\n"+WHITESPACE);
         // Move value from the register to the left variable
         out.append(assm.registerToAddr("%eax", leftVariableAddress));
         return out;

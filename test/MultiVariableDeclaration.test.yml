@@ -1,0 +1,26 @@
+name: Simple & Multi Variable Declaration Test
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+- type: file
+  name: file1
+  content: |-
+    int main() {
+      int a = 42;
+      int b;
+      int c = 33;
+      int d,e,f;
+      return c;
+    }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $42, -4(%rbp)
+      movl $33, -12(%rbp)
+      movl -12(%rbp), %eax
+      popq %rbp
+      ret
