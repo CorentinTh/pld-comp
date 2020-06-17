@@ -14,7 +14,7 @@ const string ASSM::REGISTER_RETURN = ASSM::REGISTER_A;
 // Put into register
 
 string ASSM::registerToRegister(string regA, string regB) {
-    return "movl " + regA + ", " + regB;
+    return "movl {" + regA + ", " + regB + "}";
 }
 
 string ASSM::constToRegister(string number, string reg) {

@@ -1,5 +1,4 @@
 #include <string>
-#include <map>
 #include "CompVisitor.h"
 #include "ASSM.h"
 #include "AST.h"
@@ -10,7 +9,7 @@ using namespace std;
 
 const string WHITESPACE = "  ";
 ASSM assm;
-VariableManager variableManager;
+VariableManager variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
     string out = ".text\n";

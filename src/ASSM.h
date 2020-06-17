@@ -24,8 +24,6 @@ public:
 
     string registerToAddr(string reg, string address);
     string constToAddr(string number, string address);
-
-private:
     string addrRegister(string address);
     string constRegister(string number);
 
