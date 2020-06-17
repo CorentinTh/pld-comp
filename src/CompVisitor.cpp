@@ -48,7 +48,7 @@ antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
     return visit(ctx->children.at(0));
 }
 
-antlrcpp::Any CompVisitor::visitDeclaratictation(IFCCParser::DeclarationAffectationContext *ctx) {
+antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
 
     if (variableManager.variableExists(variableName)) {
