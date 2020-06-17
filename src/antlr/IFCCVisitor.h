@@ -31,6 +31,8 @@ public:
 
     virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *context) = 0;
 
+    virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *context) = 0;
+
     virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *context) = 0;
 
     virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) = 0;

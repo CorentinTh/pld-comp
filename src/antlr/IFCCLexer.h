@@ -13,8 +13,8 @@ class  IFCCLexer : public antlr4::Lexer {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    T__7 = 8, T__8 = 9, CONST = 10, IDENTIFIER = 11, OPERATOR = 12, COMMENT = 13, 
-    DIRECTIVE = 14, WS = 15
+    T__7 = 8, T__8 = 9, T__9 = 10, CONST = 11, IDENTIFIER = 12, OPERATOR = 13, 
+    COMMENT = 14, DIRECTIVE = 15, WS = 16
   };
 
   IFCCLexer(antlr4::CharStream *input);

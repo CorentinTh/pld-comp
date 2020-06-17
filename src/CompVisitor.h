@@ -15,6 +15,8 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *ctx) override;
 
+    virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) override;
+
     virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *ctx) override;
 
     virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *ctx) override;

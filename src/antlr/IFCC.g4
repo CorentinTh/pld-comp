@@ -12,8 +12,9 @@ action: declaration
       | returnAct
       ;
 
-declaration: 'int' IDENTIFIER           # declarationEmpty
-           | 'int' IDENTIFIER '=' expr  # declarationAffectation
+declaration: 'int' IDENTIFIER                    # declarationEmpty
+           | 'int' IDENTIFIER '=' expr           # declarationAffectation
+           | 'int' IDENTIFIER (',' IDENTIFIER)*  # declarationMulti
            ;
 
 affectation: IDENTIFIER '=' expr ;
@@ -32,4 +33,3 @@ OPERATOR : [+\-*/];
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
-
