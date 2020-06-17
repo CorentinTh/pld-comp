@@ -1,5 +1,4 @@
 int main() {
-    int b = 5;
-    int a = (b * 8) - 5 + 6;
+    int a = 2 * 2 - 8 + 9;
     return a;
 }

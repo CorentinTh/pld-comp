@@ -125,6 +125,7 @@ antlrcpp::Any CompVisitor::visitOperation(IFCCParser::OperationContext *ctx) {
     node->left = visit(ctx->expr(0)).as<ASTNode*>();
     node->right = visit(ctx->expr(1)).as<ASTNode*>();
 
+    cout << node->toASM() << endl;
 
     return (ASTNode*)  node;
 }

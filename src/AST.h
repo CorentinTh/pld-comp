@@ -25,7 +25,7 @@ struct AST;
 
 class ASTNode {
 public:
-    string toASM();
+    virtual string toASM() = 0;
 };
 
 class ASTExpr : ASTNode {
@@ -33,37 +33,19 @@ public :
     ASTNode *left;
     ASTNode *right;
     string op;
+    string toASM() override;
 };
 
 class ASTValue : ASTNode {
 public :
     string value;
+    string toASM() override;
 };
 
 class ASTIdentifier : ASTNode {
 public :
     string identifier;
+    string toASM() override;
 };
 
-
-//void printAST(ASTNode *node) {
-//
-//    if (typeid(node) == typeid(ASTIdentifier *)) {
-//        cout << ((ASTIdentifier *) node)->identifier;
-//    } else if (typeid(node) == typeid(ASTValue *)) {
-//        cout << ((ASTValue *) node)->value;
-//    } else if (typeid(node) == typeid(ASTExpr *)) {
-//        printAST(((ASTExpr *) node)->right);
-//        cout << ((ASTExpr *) node)->op;
-//        printAST(((ASTExpr *) node)->left);
-//    }
-//}
-
 #endif //PLD_COMP_AST_H
-
-//b = 42
-//a = (b + 2) - 8
-//
-//b = 42
-//tmp = b + 2
-//a = tmp - 8
