@@ -9,9 +9,11 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *ctx) override;
 
-    virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override;
-
     virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override;
+
+    virtual antlrcpp::Any visitDeclarationAssign(IFCCParser::DeclarationAssignContext *ctx) override;
+
+    virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) override;
 
     virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override;
 

@@ -1,0 +1,12 @@
+name: Should return ERROR for already declared variable
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+- type: file
+  name: file1
+  content: |-
+    int main() {
+     int a = 42;
+     int a = 3;
+    }
+expect:
+  status: 1
