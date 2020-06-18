@@ -57,9 +57,20 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     variableManager->putVariableAtAddress(variableName, variableAddress);
 
     ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
-
     string out;
-    out.append(expression->toASM()).append(ASSM::INDENT).append(assm.constToAddr(ASSM::REGISTER_A, variableAddress));
+
+    if (expression->type == EXPR) {
+        out.append(expression->toASM()).append(ASSM::INDENT).append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    }else if (expression->type == VALUE) {
+        out.append(assm.registerToAddr(expression->toASM(), variableAddress));
+    }else{
+        out
+        .append(assm.registerToRegister(expression->toASM(), ASSM::REGISTER_A))
+        .append("\n")
+        .append(ASSM::INDENT)
+        .append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    }
+
     return out;
 }
 
@@ -76,11 +87,17 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
     ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
 
     string out;
-
-    out
-        .append(expression->toASM())
-        .append(ASSM::INDENT)
-        .append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    if (expression->type == EXPR) {
+        out.append(expression->toASM()).append(ASSM::INDENT).append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    }else if (expression->type == VALUE) {
+        out.append(assm.registerToAddr(expression->toASM(), variableAddress));
+    }else{
+        out
+            .append(assm.registerToRegister(expression->toASM(), ASSM::REGISTER_A))
+            .append("\n")
+            .append(ASSM::INDENT)
+            .append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
+    }
 
     return out;
 }

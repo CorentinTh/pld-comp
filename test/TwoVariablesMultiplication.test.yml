@@ -1,0 +1,28 @@
+name: Simple affectation
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+          int a = 8;
+          int b = 2;
+          int c = a * b;
+          return c;
+      }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $8, -4(%rbp)
+      movl $2, -8(%rbp)
+      movl -4(%rbp), %eax
+      imull -8(%rbp), %eax
+      movl %eax, -12(%rbp)
+      movl -12(%rbp), %eax
+      popq %rbp
+      ret
