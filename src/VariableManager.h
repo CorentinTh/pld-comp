@@ -18,8 +18,8 @@ private:
 
 public:
 
-    static VariableManager &getInstance() {
-        static VariableManager instance;
+    static VariableManager* &getInstance() {
+        static VariableManager* instance = new VariableManager;
         return instance;
     }
 

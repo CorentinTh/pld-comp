@@ -28,7 +28,17 @@ string ASTExpr::toASM() {
 
     if(this->right->type != EXPR){
         if(this->op == "*"){
-            result.append("imull {").append(this->right->toASM()).append(", %eax}\n");
+            // TODO: put imull in assm class
+            result.append(ASSM::INDENT).append("imull ").append(this->right->toASM()).append(", %eax\n");
+        }else if(this->op == "+"){
+            // TODO: put addl in assm class
+            result.append(ASSM::INDENT).append("addl ").append(this->right->toASM()).append(", %eax\n");
+        }else if(this->op == "-"){
+            // TODO: put subl in assm class
+            result.append(ASSM::INDENT).append("subl ").append(this->right->toASM()).append(", %eax\n");
+        }else if(this->op == "/"){
+            // TODO: put idivl in assm class
+            result.append(ASSM::INDENT).append("idivl ").append(this->right->toASM()).append(", %eax\n");
         }
     }else{
         result.append(this->right->toASM());
@@ -38,18 +48,16 @@ string ASTExpr::toASM() {
     return result;
 }
 
-string ASTExpr::printASM() {
-    ASSM assm;
-    string out = assm.registerToRegister(this->left->toASM(), ASSM::REGISTER_A);
-    return out;
+ASTExpr::ASTExpr() {
+    this->type = EXPR;
 }
 
-string ASTExpr::getMostLeftRegister() {
-    if (typeid(this->left) != typeid(ASTExpr)) {
-        return this->left->toASM();
-    } else {
-        return ((ASTExpr *) this->left)->getMostLeftRegister();
-    }
+ASTValue::ASTValue() {
+    this->type = VALUE;
+}
+
+ASTIdentifier::ASTIdentifier() {
+    this->type = IDENTIFIER;
 }
 
 string ASTValue::toASM() {
@@ -59,8 +67,10 @@ string ASTValue::toASM() {
 
 string ASTIdentifier::toASM() {
     ASSM assm;
-    VariableManager variableManager = VariableManager::getInstance();
+    VariableManager* variableManager = VariableManager::getInstance();
     //TODO check existance
-    string variableAddress = variableManager.getAddress(this->identifier);
+    string variableAddress = variableManager->getAddress(this->identifier);
     return assm.addrRegister(variableAddress);
 }
+
+

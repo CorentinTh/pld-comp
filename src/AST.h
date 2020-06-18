@@ -16,7 +16,7 @@ using namespace std;
 // 2   +
 //    / \
 //   5   6
-//
+
 
 // tmp1 = 5 + 6
 // tmp2 = tmp1 * 2
@@ -24,40 +24,32 @@ using namespace std;
 struct AST;
 
 enum NodeType {
-    EXPR,
     VALUE,
+    EXPR,
     IDENTIFIER
 };
 
 class ASTNode {
 public:
-    const NodeType type;
+    NodeType type = static_cast<NodeType>(-1);
 
     virtual string toASM() = 0;
 };
 
 class ASTExpr : ASTNode {
 public :
-    ASTExpr() = default;
+    ASTExpr();
 
-    const NodeType type = EXPR;
-
-    ASTNode *left;
-    ASTNode *right;
+    ASTNode *left{};
+    ASTNode *right{};
     string op;
 
     string toASM() override;
-
-    string printASM();
-
-    string getMostLeftRegister();
 };
 
 class ASTValue : ASTNode {
 public :
-    ASTValue() = default;
-
-    const NodeType type = VALUE;
+    ASTValue();
     string value;
 
     string toASM() override;
@@ -65,9 +57,8 @@ public :
 
 class ASTIdentifier : ASTNode {
 public :
-    ASTIdentifier() = default;
 
-    const NodeType type = IDENTIFIER;
+    ASTIdentifier();
 
     string identifier;
 

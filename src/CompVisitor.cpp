@@ -7,9 +7,8 @@
 
 using namespace std;
 
-const string WHITESPACE = "  ";
 ASSM assm;
-VariableManager variableManager = VariableManager::getInstance();
+VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
     string out = ".text\n";
@@ -21,20 +20,20 @@ antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
 antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     // Prologue
     string out = "main:\n";
-    out.append(WHITESPACE + "pushq %rbp\n");
-    out.append(WHITESPACE + "movq %rsp, %rbp\n");
+    out.append(ASSM::INDENT + "pushq %rbp\n");
+    out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
 
     // Instructions
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
         if (visited.isNotNull()) {
-            out.append(WHITESPACE + visited.as<std::string>() + "\n");
+            out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
         }
     }
 
     // Epilogue
-    out.append(WHITESPACE + "popq %rbp\n");
-    out.append(WHITESPACE + "ret\n");
+    out.append(ASSM::INDENT + "popq %rbp\n");
+    out.append(ASSM::INDENT + "ret\n");
 
     return out;
 }
@@ -50,42 +49,38 @@ antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
 antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
 
-    if (variableManager.variableExists(variableName)) {
+    if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
         exit(EXIT_FAILURE);
     }
-    const string variableAddress = variableManager.getNextAddress();
-    variableManager.putVariableAtAddress(variableName, variableAddress);
+    const string variableAddress = variableManager->getNextAddress();
+    variableManager->putVariableAtAddress(variableName, variableAddress);
 
-    const string expression = visit(ctx->expr()).as<string>();
-    return assm.constToAddr(expression, variableAddress);
+    ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
+
+    string out;
+    out.append(expression->toASM()).append(ASSM::INDENT).append(assm.constToAddr(ASSM::REGISTER_A, variableAddress));
+    return out;
 }
 
 antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
     // TODO: better expression parsing
     const string variableName = ctx->IDENTIFIER()->getText();
 
-    if (!variableManager.variableExists(variableName)) {
+    if (!variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is not defined");
         exit(EXIT_FAILURE);
     }
 
-    const string variableAddress = variableManager.getAddress(variableName);
-    const string expression = visit(ctx->expr()).as<string>();
+    const string variableAddress = variableManager->getAddress(variableName);
+    ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
 
     string out;
-    const bool isConst = isdigit(expression.at(0)); // TODO: to be changed
 
-    if (isConst) {
-        out = assm.constToAddr(expression, variableAddress);
-    } else {
-        // TODO: AST thing
-        // TODO
-        string rightVariableAddress = variableManager.getAddress(expression);
-        out = assm.addrToRegister(rightVariableAddress, ASSM::REGISTER_A);
-        out.append("\n" + WHITESPACE);
-        out.append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
-    }
+    out
+        .append(expression->toASM())
+        .append(ASSM::INDENT)
+        .append(assm.registerToAddr(ASSM::REGISTER_A, variableAddress));
 
     return out;
 }
@@ -93,13 +88,13 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
 
-    if (variableManager.variableExists(variableName)) {
+    if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
         exit(EXIT_FAILURE);
     }
 
-    const string variableAddress = variableManager.getNextAddress();
-    variableManager.putVariableAtAddress(variableName, variableAddress);
+    const string variableAddress = variableManager->getNextAddress();
+    variableManager->putVariableAtAddress(variableName, variableAddress);
 
     return nullptr;
 }
@@ -109,12 +104,12 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiCon
     for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
         if (ctx->IDENTIFIER(i) != nullptr) {
             const string variableName = ctx->IDENTIFIER(i)->getText();
-            if (variableManager.variableExists(variableName)) {
+            if (variableManager->variableExists(variableName)) {
                 Logger::error("Variable " + variableName + " is already defined");
                 exit(EXIT_FAILURE);
             } else {
-                const string variableAddress = variableManager.getNextAddress();
-                variableManager.putVariableAtAddress(variableName, variableAddress);
+                const string variableAddress = variableManager->getNextAddress();
+                variableManager->putVariableAtAddress(variableName, variableAddress);
             }
         }
     }
@@ -123,30 +118,27 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiCon
 
 
 antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
-    // TODO: better expression parsing
-    const string expression = visit(ctx->expr()).as<string>();
-    const bool isConst = isdigit(expression.at(0)); // TODO: to be changed
-
+    ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
     string out;
-    if (isConst) {
-        out = assm.constToRegister(expression, ASSM::REGISTER_RETURN);
+
+    if (expression->type != EXPR) {
+        out.append(assm.registerToRegister(expression->toASM(), ASSM::REGISTER_RETURN));
     } else {
-        // TODO: AST
-        const string variableAddress = variableManager.getAddress(expression);
-        out = assm.addrToRegister(variableAddress, ASSM::REGISTER_RETURN);
+        out.append(expression->toASM()).append("\n");
     }
+
     return out;
 }
 
 
 antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
-    ASTIdentifier *node = new ASTIdentifier;
+    ASTIdentifier *node = new ASTIdentifier();
     node->identifier = ctx->IDENTIFIER()->getText();
     return (ASTNode *) node;
 }
 
 antlrcpp::Any CompVisitor::visitConst(IFCCParser::ConstContext *ctx) {
-    ASTValue *node = new ASTValue;
+    ASTValue *node = new ASTValue();
     node->value = ctx->CONST()->getText();
     return (ASTNode *) node;
 }
@@ -157,13 +149,11 @@ antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx)
 }
 
 antlrcpp::Any CompVisitor::visitOperation(IFCCParser::OperationContext *ctx) {
-    ASTExpr *node = new ASTExpr;
+    ASTExpr *node = new ASTExpr();
 
     node->op = ctx->OPERATOR()->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
-
-    cout << node->toASM() << endl;
 
     return (ASTNode *) node;
 }

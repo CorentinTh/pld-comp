@@ -10,11 +10,12 @@ const string ASSM::REGISTER_B = "%ebx";
 const string ASSM::REGISTER_C = "%ecx";
 const string ASSM::REGISTER_D = "%edx";
 const string ASSM::REGISTER_RETURN = ASSM::REGISTER_A;
+const string ASSM::INDENT = "  ";
 
 // Put into register
 
 string ASSM::registerToRegister(string regA, string regB) {
-    return "movl {" + regA + ", " + regB + "}";
+    return "movl " + regA + ", " + regB;
 }
 
 string ASSM::constToRegister(string number, string reg) {
