@@ -12,6 +12,8 @@ For now our compilator support the following features :
 * Multiple variable declaration and affectation (only integer)
 * Arithmetics
 
+The project is also using unit testing to prevent regressions.
+
 ## Team
 
 This is a group project made by :
