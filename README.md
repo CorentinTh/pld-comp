@@ -53,7 +53,7 @@ The grammar is written for antlr4, you can find the describing file under antlr4
 
 #### Visitors
 
-For each of our grammars entries we generate a visitor in C++ that will be used for syntaxe validation and assembly conversion.
+For each of our grammars entries we generate a visitor in C++ that will be used for syntaxe validation and assembly conversion. You can find our visitors in file `CompVisitor.cpp`.
 
 We also use a AST tree to process arithmetics.
 
