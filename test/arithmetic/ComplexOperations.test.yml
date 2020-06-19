@@ -1,8 +1,7 @@
-name: Simple multiplication
-command: ./cmake-build-debug/pld-comp {file1}
+name: Complexs operations
 assets:
   - type: file
-    name: file1
+    name: input.c
     content: |-
       int main() {
         int a, b, c;
@@ -11,30 +10,42 @@ assets:
         c = a * a + b * b + 1;
         return c;
       }
-expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $17, -4(%rbp)
-      movl $42, -8(%rbp)
-      movl -4(%rbp), %eax
-      movl -4(%rbp), %ebx
-      imull %ebx, %eax
-      movl %eax, %edx
-      movl -8(%rbp), %eax
-      movl -8(%rbp), %ebx
-      imull %ebx, %ebx
-      movl %edx, %eax
-      addl %ebx, %eax
-      movl %eax, %edx
-      movl $1, %ebx
-      movl %edx, %eax
-      addl %ebx, %eax
-      movl %eax, -12(%rbp)
-      movl -12(%rbp), %eax
-      popq %rbp
-      ret
+  - type: file
+    name: result.s
+  - type: file
+    name: exec
+steps:
+  - command: ./cmake-build-debug/pld-comp {input.c} > {result.s}
+    expect:
+      status: 0
+  - command: cat {result.s}
+    expect:
+      stdout: |-
+        .text
+        .global main
+        main:
+          pushq %rbp
+          movq %rsp, %rbp
+          movl $17, -4(%rbp)
+          movl $42, -8(%rbp)
+          movl -4(%rbp), %eax
+          movl -4(%rbp), %ebx
+          imull %ebx, %eax
+          movl %eax, %edx
+          movl -8(%rbp), %eax
+          movl -8(%rbp), %ebx
+          imull %ebx, %ebx
+          movl %edx, %eax
+          addl %ebx, %eax
+          movl %eax, %edx
+          movl $1, %ebx
+          movl %edx, %eax
+          addl %ebx, %eax
+          movl %eax, -12(%rbp)
+          movl -12(%rbp), %eax
+          popq %rbp
+          ret
+  - command: gcc {result.s} -o {exec}
+  - command: "{exec}"
+    expect:
+      status: 6
