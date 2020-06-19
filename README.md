@@ -4,7 +4,7 @@
 ## Description
 
 This project has been made during study time at INSA Lyon
-The goal of the project was to make a C compilator using C++ and Antlr4
+The goal of the project was to make a C compiler using C++ and Antlr4
 
 For now our compilator support the following features :
 * Main function
@@ -14,7 +14,7 @@ For now our compilator support the following features :
 
 The project is also using unit testing to prevent regressions.
 
-## Team
+## Team and Organisation
 
 This is a group project made by :
 * Corentin Thomasset
@@ -22,6 +22,8 @@ This is a group project made by :
 * Lucca Paffi
 * Marc Meillac
 * Balthazar Frolin
+
+We mostly works with pair programming doing iterative works and building our compiler step by step
 
 ## User Manuel
 
