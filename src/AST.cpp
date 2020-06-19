@@ -21,13 +21,12 @@
 // Next, we browse all the right nodes
 // Finnaly, we handle the current node
 string ASTExpr::toASM() {
-    ASSM assm;
     string result;
 
     // All left nodes browsing
     if(this->left != nullptr) {
         if(this->left->type != EXPR) {
-            result.append(assm.registerToRegister(this->left->toASM(), ASSM::REGISTER_A)).append("\n");
+            result.append(ASSM::INDENT).append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A)).append("\n");
         } else {
             result.append(this->left->toASM());
         }
@@ -36,7 +35,7 @@ string ASTExpr::toASM() {
     // All right nodes browsing
     if(this->right != nullptr) {
         if(this->right->type != EXPR) {
-            result.append(assm.registerToRegister(this->right->toASM(), ASSM::REGISTER_B)).append("\n");
+            result.append(ASSM::INDENT).append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B)).append("\n");
         } else {
             result.append(this->right->toASM());
         }
@@ -58,15 +57,15 @@ string ASTExpr::toASM() {
         // If my left branch is an expression, an operation result has been stashed to register D
         if(this->left->type == EXPR) {
             // Pop operation result from register D to register A
-            result.append(ASSM::INDENT).append(assm.registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A)).append("\n");
+            result.append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A)).append("\n");
         }
 
-        result.append(ASSM::INDENT).append(assm.operation(ASSM::REGISTER_B, this->op, outputReg));
+        result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_B, this->op, outputReg));
 
         // If I am a left expression I have to stash the operation result to register D to avoid its deletion by the right branch
         if(isLeftExpr && !isRootNode) {
             // Stash operation result from register A to register D
-            result.append(ASSM::INDENT).append(assm.registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n");
+            result.append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n");
         }
     }
 
@@ -86,16 +85,14 @@ ASTIdentifier::ASTIdentifier() {
 }
 
 string ASTValue::toASM() {
-    ASSM assm;
-    return assm.constRegister(this->value);
+    return ASSM::constRegister(this->value);
 }
 
 string ASTIdentifier::toASM() {
-    ASSM assm;
     VariableManager* variableManager = VariableManager::getInstance();
     //TODO check existance
     string variableAddress = variableManager->getAddress(this->identifier);
-    return assm.addrRegister(variableAddress);
+    return ASSM::addrRegister(variableAddress);
 }
 
 

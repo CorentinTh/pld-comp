@@ -21,7 +21,8 @@ expect:
       movl $8, -4(%rbp)
       movl $2, -8(%rbp)
       movl -4(%rbp), %eax
-      imull -8(%rbp), %eax
+      movl -8(%rbp), %ebx
+      imull %ebx, %eax
       movl %eax, -12(%rbp)
       movl -12(%rbp), %eax
       popq %rbp
