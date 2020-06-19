@@ -7,13 +7,22 @@
 
 #include <string>
 #include <map>
+
 using namespace std;
 
 class VariableManager {
 private:
     map<string, string> variableAddressMap;
 
+    VariableManager() = default;
+
 public:
+
+    static VariableManager* &getInstance() {
+        static VariableManager* instance = new VariableManager;
+        return instance;
+    }
+
     bool variableExists(string variableName);
 
     string getAddress(string variableName);

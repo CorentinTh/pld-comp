@@ -27,15 +27,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *ctx) override {
+  virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override {
+  virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitDeclarationAssign(IFCCParser::DeclarationAssignContext *ctx) override {
+  virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -43,19 +43,31 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override {
+  virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *ctx) override {
+  virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) override {
+  virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *ctx) override {
+  virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override {
     return visitChildren(ctx);
   }
 

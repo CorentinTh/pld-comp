@@ -5,29 +5,32 @@ axiom : prog
 
 prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
 
-instruction: expression ';' ;
+instruction: action ';' ;
 
-expression: declaration
-    | affectation
-    | returnExpr
+action: declaration
+      | affectation
+      | returnAct
+      ;
+
+declaration: 'int' IDENTIFIER                    # declarationEmpty
+           | 'int' IDENTIFIER '=' expr           # declarationAffectation
+           | 'int' IDENTIFIER (',' IDENTIFIER)*  # declarationMulti
+           ;
+
+affectation: IDENTIFIER '=' expr ;
+
+returnAct: 'return' expr ;
+
+expr: expr OP=( '*' | '/' ) expr        # operationMultDiv
+    | expr OP=( '+' | '-' ) expr        # operationPlusMinus
+    | CONST                             # const
+    | IDENTIFIER                        # identifier
+    | '(' expr ')'                      # parenthesis
     ;
-
-declaration: 'int' IDENTIFIER ASSIGNMENT_OPERATOR CONST   #declarationConst
-           | 'int' IDENTIFIER ASSIGNMENT_OPERATOR IDENTIFIER #declarationAssign
-           | 'int' IDENTIFIER (',' IDENTIFIER)*   #declarationMulti
-           ;
-
-affectation: IDENTIFIER ASSIGNMENT_OPERATOR IDENTIFIER  #affectationIdentifier
-           | IDENTIFIER ASSIGNMENT_OPERATOR CONST       #affectationConst
-           ;
-
-returnExpr:  'return' IDENTIFIER             #returnIdentifier
-           | 'return' CONST                  #returnConst
-           ;
 
 CONST : [0-9]+ ;
 IDENTIFIER: [a-zA-Z]+ ;
+OPERATOR : [+\-*/];
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
-ASSIGNMENT_OPERATOR: '=';

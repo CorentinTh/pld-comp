@@ -10,6 +10,7 @@ const string ASSM::REGISTER_B = "%ebx";
 const string ASSM::REGISTER_C = "%ecx";
 const string ASSM::REGISTER_D = "%edx";
 const string ASSM::REGISTER_RETURN = ASSM::REGISTER_A;
+const string ASSM::INDENT = "  ";
 
 // Put into register
 
@@ -43,4 +44,15 @@ string ASSM::addrRegister(string address) {
 
 string ASSM::constRegister(string number) {
     return "$" + number;
+}
+
+string ASSM::operation(string regLeft, string op, string regRight) {
+    string keyword;
+
+    if (op == "*") keyword = "imull ";
+    if (op == "/") keyword = "idivl ";
+    if (op == "+") keyword = "addl ";
+    if (op == "-") keyword = "subl ";
+
+    return string(keyword).append(regLeft).append(", ").append(regRight).append("\n");
 }

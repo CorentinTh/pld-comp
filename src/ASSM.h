@@ -17,18 +17,23 @@ public:
     static const string REGISTER_C;
     static const string REGISTER_D;
     static const string REGISTER_RETURN;
+    static const string INDENT;
 
-    string registerToRegister(string regA, string regB);
-    string constToRegister(string number, string reg);
-    string addrToRegister(string address, string reg);
+    static string registerToRegister(string regA, string regB);
 
-    string registerToAddr(string reg, string address);
-    string constToAddr(string number, string address);
+    static string constToRegister(string number, string reg);
 
-private:
-    string addrRegister(string address);
-    string constRegister(string number);
+    static string addrToRegister(string address, string reg);
 
+    static string registerToAddr(string reg, string address);
+
+    static string constToAddr(string number, string address);
+
+    static string addrRegister(string address);
+
+    static string constRegister(string number);
+
+    static string operation(string regLeft, string op, string regRight);
 };
 
 

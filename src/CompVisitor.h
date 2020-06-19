@@ -7,19 +7,26 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override;
 
-    virtual antlrcpp::Any visitExpression(IFCCParser::ExpressionContext *ctx) override;
+    virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *ctx) override;
 
-    virtual antlrcpp::Any visitDeclarationConst(IFCCParser::DeclarationConstContext *ctx) override;
+    virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override;
 
-    virtual antlrcpp::Any visitDeclarationAssign(IFCCParser::DeclarationAssignContext *ctx) override;
+    virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) override;
+
+    virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *ctx) override;
 
     virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) override;
 
-    virtual antlrcpp::Any visitAffectationIdentifier(IFCCParser::AffectationIdentifierContext *ctx) override;
+    virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *ctx) override;
 
-    virtual antlrcpp::Any visitAffectationConst(IFCCParser::AffectationConstContext *ctx) override;
+    virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *ctx) override;
 
-    virtual antlrcpp::Any visitReturnIdentifier(IFCCParser::ReturnIdentifierContext *ctx) override;
+    virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *ctx) override;
 
-    virtual antlrcpp::Any visitReturnConst(IFCCParser::ReturnConstContext *ctx) override;
+    virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override;
+
+    virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) override;
+
+    virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) override;
+
 };

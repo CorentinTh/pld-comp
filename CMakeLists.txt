@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(src)
 include_directories(src/antlr)
 
-add_executable(pld-comp
+add_executable(
+        pld-comp
         src/antlr/IFCCBaseVisitor.cpp
         src/antlr/IFCCBaseVisitor.h
         src/antlr/IFCCLexer.cpp
@@ -21,11 +22,15 @@ add_executable(pld-comp
         src/Logger.cpp
         src/ASSM.h
         src/ASSM.cpp
+        src/main.cpp
+        src/AST.cpp
+        src/AST.h
         src/Variable.h
         src/Variable.cpp
         src/VariableManager.h
         src/VariableManager.cpp
-        src/main.cpp)
+        src/main.cpp
+)
 
 include(ExternalAntlr4Cpp.cmake)
 include_directories(${ANTLR4_INCLUDE_DIRS})
