@@ -23,7 +23,8 @@ This is a group project made by :
 * Marc Meillac
 * Balthazar Frolin
 
-We mostly works with pair/group programming doing iterative works and building our compiler step by step
+We mostly works with pair/group programming doing iterative works and building our compiler step by step.
+We also use Github Project to track bugs and features status. The fact that it is fully integrated with github allow us to work faster with one single account.
 
 ## User Manuel
 
