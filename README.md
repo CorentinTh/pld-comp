@@ -39,6 +39,12 @@ Now you can run your binary file on your computer and see your program working.
 
 The grammar is written for antlr4, you can find the describing file under antlr4 folder with .g4 extension.
 
+#### Modules
+
+Variable Manager
+ASSM
+Logger
+
 #### Visitors
 
 For each of our grammars entries we generate a visitor in C++ that will be used for syntaxe validation and assembly conversion.
