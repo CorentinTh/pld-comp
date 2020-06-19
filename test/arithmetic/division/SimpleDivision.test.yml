@@ -1,0 +1,25 @@
+name: Simple Division
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+- type: file
+  name: file1
+  content: |-
+    int main() {
+        int a = 10 / 3;
+        return a;
+    }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $10, %eax
+      movl $3, %ebx
+      idivl %ebx, %eax
+      movl %eax, -4(%rbp)
+      movl -4(%rbp), %eax
+      popq %rbp
+      ret

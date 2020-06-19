@@ -1,12 +1,12 @@
 
 #include "AST.h"
 #include "ASSM.h"
+#include "Logger.h"
 #include "VariableManager.h"
 
 // tmp1 = 2*2
 // tmp2 = tmp1-8
 // tmp3 = tmp2+9
-
 //      []
 //      |
 //      *
@@ -19,7 +19,7 @@
 // The graph browsing algorithm is post-order
 // First, we browse all the left nodes
 // Next, we browse all the right nodes
-// Finnaly, we handle the current node
+// Finally, we handle the current node
 string ASTExpr::toASM() {
     string result;
 
@@ -102,8 +102,12 @@ string ASTValue::toASM() {
 
 string ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
-    //TODO check existance
-    string variableAddress = variableManager->getAddress(this->identifier);
+    string variableName = this->identifier;
+    if (!variableManager->variableExists(variableName)) {
+        Logger::error("Variable " + variableName + " is not defined");
+        exit(EXIT_FAILURE);
+    }
+    string variableAddress = variableManager->getAddress(variableName);
     return ASSM::addrRegister(variableAddress);
 }
 

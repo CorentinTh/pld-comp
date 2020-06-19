@@ -1,4 +1,4 @@
-name: Should return SUCCESS for simple assignment
+name: Should return SUCCESS for simple assignment-and-declaration
 command: ./cmake-build-debug/pld-comp {file1}
 assets:
 - type: file

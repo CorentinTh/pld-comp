@@ -1,4 +1,4 @@
-name: Simple multiplication
+name: Operations with different priorities
 command: ./cmake-build-debug/pld-comp {file1}
 assets:
   - type: file

@@ -1,0 +1,25 @@
+name: Simple Multiplication
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+          int a = 8 * 8;
+          return a;
+      }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $8, %eax
+      movl $8, %ebx
+      imull %ebx, %eax
+      movl %eax, -4(%rbp)
+      movl -4(%rbp), %eax
+      popq %rbp
+      ret
