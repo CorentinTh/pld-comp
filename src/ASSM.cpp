@@ -45,3 +45,14 @@ string ASSM::addrRegister(string address) {
 string ASSM::constRegister(string number) {
     return "$" + number;
 }
+
+string ASSM::operation(string regLeft, string op, string regRight) {
+    string keyword;
+
+    if (op == "*") keyword = "imull ";
+    if (op == "/") keyword = "idivl ";
+    if (op == "+") keyword = "addl ";
+    if (op == "-") keyword = "subl ";
+
+    return string(keyword).append(regLeft).append(", ").append(regRight).append("\n");
+}

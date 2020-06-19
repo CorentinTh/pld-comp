@@ -27,7 +27,7 @@ public:
     string constToAddr(string number, string address);
     string addrRegister(string address);
     string constRegister(string number);
-
+    string operation(string regLeft, string op, string regRight);
 };
 
 

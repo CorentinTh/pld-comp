@@ -61,19 +61,7 @@ string ASTExpr::toASM() {
             result.append(ASSM::INDENT).append(assm.registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A)).append("\n");
         }
 
-        if(this->op == "*"){
-            // TODO: put imull in assm class
-            result.append(ASSM::INDENT).append("imull ").append(ASSM::REGISTER_B).append(", ").append(outputReg).append("\n");
-        }else if(this->op == "+"){
-            // TODO: put addl in assm class
-            result.append(ASSM::INDENT).append("addl ").append(ASSM::REGISTER_B).append(", ").append(outputReg).append("\n");
-        }else if(this->op == "-"){
-            // TODO: put subl in assm class
-            result.append(ASSM::INDENT).append("subl ").append(ASSM::REGISTER_B).append(", ").append(outputReg).append("\n");
-        }else if(this->op == "/"){
-            // TODO: put idivl in assm class
-            result.append(ASSM::INDENT).append("idivl ").append(ASSM::REGISTER_B).append(", ").append(outputReg).append("\n");
-        }
+        result.append(ASSM::INDENT).append(assm.operation(ASSM::REGISTER_B, this->op, outputReg));
 
         // If I am a left expression I have to stash the operation result to register D to avoid its deletion by the right branch
         if(isLeftExpr && !isRootNode) {
