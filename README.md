@@ -30,7 +30,7 @@ We also use Github Project to track bugs and features status. The fact that it i
 
 In order to use our compiler follow the these steps :
 * Write your own program using the basic c grammar (for the implemented features)
-* Execute our compiler 
+* Execute our compiler (see "[Using command line](#using-command-line)")
   * If there is syntaxe issues, errors will be printed in the console output
   * Else you will get your working binary file
 
@@ -42,13 +42,13 @@ Now you can run your binary file on your computer and see your program working.
 
 #### Grammar
 
-The grammar is written for antlr4, you can find the describing file under antlr4 folder with `.g4` extension.
+The grammar is written for antlr4, you can find the describing file under antlr4 folder with `.g4` extension ([here](./src/antlr/IFCC.g4)).
 
 #### Modules
 
 * **Variable Manager** used to simplify variable management during compilation process
 
-* **ASSM** //TODO 
+* **ASSM** utility class that generate simplify assembly generation
 
 * **Logger** used to provide informations during compilation process
 
@@ -62,10 +62,58 @@ We also use a AST tree to process arithmetics.
 
 ### IC Explaination
 
-TODO
+To ensure we do not create regression while implementing features, we've setup continuous integration thanks to Github Actions. The pipeline configuration file is located in [.github/workflows/c-cpp.yml](./.github/workflows/c-cpp.yml). To do so, we've create a small node.js framework called [comest](https://github.com/CorentinTh/comest) that permits to execute shell commands and check stdout, stderr and the result code of the command thanks to `yaml` files. Here is an example of a test file :
+
+```yaml
+name: Simple multiplication
+command: ./cmake-build-debug/pld-comp {file1}
+assets:
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+          int a = 8 * 8;
+          return a;
+      }
+expect:
+  status: 0
+  stdout: |-
+    .text
+    .global main
+    main:
+      pushq %rbp
+      movq %rsp, %rbp
+      movl $8, %eax
+      movl $8, %ebx
+      imull %ebx, %eax
+      movl %eax, -4(%rbp)
+      movl -4(%rbp), %eax
+      popq %rbp
+      ret
+```
 
 ## Build
 
-This project uses Cmake to build. Open it with CLion as a CMake project and the magic will show !
+This project uses Cmake to build. 
 
-Note that the packages `uuid-dev` and `pkg-config` have to be installed.
+### Prerequisites
+The packages `uuid-dev` and `pkg-config` have to be installed.
+
+```shell
+sudo apt-get install uuid-dev pkg-config
+```
+
+### Using command line
+```shell
+# Compile
+cmake . -B cmake-build-debug
+cd cmake-build-debug
+make
+
+# Execute
+./pld-comp myFile.c
+```
+
+### Using Clion
+Open it with CLion as a CMake project and the magic will show !
+
