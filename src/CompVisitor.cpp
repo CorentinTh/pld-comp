@@ -171,6 +171,8 @@ antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivCon
     node->op = ctx->OP->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
+    node->left->parent = (ASTNode *) node;
+    node->right->parent = (ASTNode *) node;
 
     return (ASTNode *) node;
 }
@@ -181,6 +183,8 @@ antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinu
     node->op = ctx->OP->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
+    node->left->parent = (ASTNode *) node;
+    node->right->parent = (ASTNode *) node;
 
     return (ASTNode *) node;
 }

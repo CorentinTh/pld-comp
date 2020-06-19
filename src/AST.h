@@ -31,7 +31,11 @@ enum NodeType {
 
 class ASTNode {
 public:
+    ASTNode() {
+        this->parent = nullptr;
+    }
     NodeType type = static_cast<NodeType>(-1);
+    ASTNode * parent;
 
     virtual string toASM() = 0;
 };
