@@ -27,10 +27,10 @@ We mostly works with pair programming doing iterative works and building our com
 
 ## User Manuel
 
-In order to use our compilator follow the these steps :
+In order to use our compiler follow the these steps :
 * Write your own program using the basic c grammar (for the implemented features)
 * Execute our compiler 
-  * If there is syntaxe issue, errors will be printed in the console output
+  * If there is syntaxe issues, errors will be printed in the console output
   * Else you will get your working binary file
 
 Now you can run your binary file on your computer and see your program working.
@@ -46,7 +46,9 @@ The grammar is written for antlr4, you can find the describing file under antlr4
 #### Modules
 
 Variable Manager
+
 ASSM
+
 Logger
 
 #### Visitors
@@ -55,11 +57,14 @@ For each of our grammars entries we generate a visitor in C++ that will be used 
 
 We also use a AST tree to process arithmetics.
 
+> For now our assembly code is generated at differents places, we know it's not a really clean solution but we are waiting for the IR implemtation to refactor this solution.
+
 ### IC Explaination
 
 TODO
 
 ## Build
+
 This project uses Cmake to build. Open it with CLion as a CMake project and the magic will show !
 
 Note that the packages `uuid-dev` and `pkg-config` have to be installed.
