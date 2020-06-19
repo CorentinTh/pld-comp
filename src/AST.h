@@ -34,8 +34,9 @@ public:
     ASTNode() {
         this->parent = nullptr;
     }
+
     NodeType type = static_cast<NodeType>(-1);
-    ASTNode * parent;
+    ASTNode *parent;
 
     virtual string toASM() = 0;
 };
@@ -54,6 +55,7 @@ public :
 class ASTValue : ASTNode {
 public :
     ASTValue();
+
     string value;
 
     string toASM() override;

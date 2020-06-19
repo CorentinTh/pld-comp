@@ -26,7 +26,7 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
         if (visited.isNotNull()) {
-            out.append( visited.as<std::string>() + "\n");
+            out.append(visited.as<std::string>() + "\n");
         }
     }
 
@@ -59,18 +59,19 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     string out;
 
     if (expression->type == EXPR) {
-        out.append(expression->toASM()).append(ASSM::INDENT).append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-    }else if (expression->type == VALUE) {
+        out.append(expression->toASM()).append(ASSM::INDENT).append(
+                ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
+    } else if (expression->type == VALUE) {
         out
-            .append(ASSM::INDENT)
-            .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
-    }else{
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
+    } else {
         out
-        .append(ASSM::INDENT)
-        .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
-        .append("\n")
-        .append(ASSM::INDENT)
-        .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
+                .append("\n")
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
     return out;
@@ -90,18 +91,19 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 
     string out;
     if (expression->type == EXPR) {
-        out.append(expression->toASM()).append(ASSM::INDENT).append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-    }else if (expression->type == VALUE) {
+        out.append(expression->toASM()).append(ASSM::INDENT).append(
+                ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
+    } else if (expression->type == VALUE) {
         out
-            .append(ASSM::INDENT)
-            .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
-    }else{
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
+    } else {
         out
-            .append(ASSM::INDENT)
-            .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
-            .append("\n")
-            .append(ASSM::INDENT)
-            .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
+                .append("\n")
+                .append(ASSM::INDENT)
+                .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
     return out;

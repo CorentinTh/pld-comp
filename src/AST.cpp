@@ -24,29 +24,35 @@ string ASTExpr::toASM() {
     string result;
 
     // All left nodes browsing
-    if(this->left != nullptr) {
-        if(this->left->type != EXPR) {
-            result.append(ASSM::INDENT).append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A)).append("\n");
+    if (this->left != nullptr) {
+        if (this->left->type != EXPR) {
+            result
+                    .append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A))
+                    .append("\n");
         } else {
             result.append(this->left->toASM());
         }
     }
 
     // All right nodes browsing
-    if(this->right != nullptr) {
-        if(this->right->type != EXPR) {
-            result.append(ASSM::INDENT).append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B)).append("\n");
+    if (this->right != nullptr) {
+        if (this->right->type != EXPR) {
+            result
+                    .append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B))
+                    .append("\n");
         } else {
             result.append(this->right->toASM());
         }
     }
 
     // Handle current node
-    if(this->type == EXPR) {
+    if (this->type == EXPR) {
         bool isRootNode = this->parent == nullptr;
         bool isLeftExpr = false;
-        if(!isRootNode) {
-            ASTExpr * parentExpr = (ASTExpr *) this->parent;
+        if (!isRootNode) {
+            ASTExpr *parentExpr = (ASTExpr *) this->parent;
             isLeftExpr = parentExpr->left == this;
         }
 
@@ -55,17 +61,23 @@ string ASTExpr::toASM() {
         string outputReg = isRootNode || isLeftExpr ? ASSM::REGISTER_A : ASSM::REGISTER_B;
 
         // If my left branch is an expression, an operation result has been stashed to register D
-        if(this->left->type == EXPR) {
+        if (this->left->type == EXPR) {
             // Pop operation result from register D to register A
-            result.append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A)).append("\n");
+            result
+                    .append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A))
+                    .append("\n");
         }
 
         result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_B, this->op, outputReg));
 
         // If I am a left expression I have to stash the operation result to register D to avoid its deletion by the right branch
-        if(isLeftExpr && !isRootNode) {
+        if (isLeftExpr && !isRootNode) {
             // Stash operation result from register A to register D
-            result.append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n");
+            result
+                    .append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D))
+                    .append("\n");
         }
     }
 
@@ -89,7 +101,7 @@ string ASTValue::toASM() {
 }
 
 string ASTIdentifier::toASM() {
-    VariableManager* variableManager = VariableManager::getInstance();
+    VariableManager *variableManager = VariableManager::getInstance();
     //TODO check existance
     string variableAddress = variableManager->getAddress(this->identifier);
     return ASSM::addrRegister(variableAddress);
