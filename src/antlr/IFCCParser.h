@@ -13,8 +13,9 @@ class  IFCCParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    T__7 = 8, T__8 = 9, T__9 = 10, CONST = 11, IDENTIFIER = 12, OPERATOR = 13, 
-    COMMENT = 14, DIRECTIVE = 15, WS = 16
+    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
+    CONST = 15, IDENTIFIER = 16, OPERATOR = 17, COMMENT = 18, DIRECTIVE = 19, 
+    WS = 20
   };
 
   enum {
@@ -187,21 +188,31 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  OperationPlusMinusContext : public ExprContext {
+  public:
+    OperationPlusMinusContext(ExprContext *ctx);
+
+    antlr4::Token *OP = nullptr;
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  OperationMultDivContext : public ExprContext {
+  public:
+    OperationMultDivContext(ExprContext *ctx);
+
+    antlr4::Token *OP = nullptr;
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  ParenthesisContext : public ExprContext {
   public:
     ParenthesisContext(ExprContext *ctx);
 
     ExprContext *expr();
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-  };
-
-  class  OperationContext : public ExprContext {
-  public:
-    OperationContext(ExprContext *ctx);
-
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
-    antlr4::tree::TerminalNode *OPERATOR();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 

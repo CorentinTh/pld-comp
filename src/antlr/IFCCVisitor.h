@@ -41,9 +41,11 @@ public:
 
     virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;
 
-    virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) = 0;
+    virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) = 0;
 
-    virtual antlrcpp::Any visitOperation(IFCCParser::OperationContext *context) = 0;
+    virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) = 0;
+
+    virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) = 0;
 
 
 };

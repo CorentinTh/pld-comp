@@ -25,5 +25,8 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override;
 
-    virtual antlrcpp::Any visitOperation(IFCCParser::OperationContext *ctx) override;
+    virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) override;
+
+    virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) override;
+
 };

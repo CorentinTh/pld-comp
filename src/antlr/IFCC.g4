@@ -21,7 +21,8 @@ affectation: IDENTIFIER '=' expr ;
 
 returnAct: 'return' expr ;
 
-expr: expr OPERATOR expr                # operation
+expr: expr OP=( '*' | '/' ) expr        # operationMultDiv
+    | expr OP=( '+' | '-' ) expr        # operationPlusMinus
     | CONST                             # const
     | IDENTIFIER                        # identifier
     | '(' expr ')'                      # parenthesis

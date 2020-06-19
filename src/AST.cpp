@@ -27,17 +27,23 @@ string ASTExpr::toASM() {
     }
 
     if(this->right->type != EXPR){
+
+        // TODO: switch with enum
         if(this->op == "*"){
             // TODO: put imull in assm class
+            // TODO: use ASSM::REGISTER_*
             result.append(ASSM::INDENT).append("imull ").append(this->right->toASM()).append(", %eax\n");
         }else if(this->op == "+"){
             // TODO: put addl in assm class
+            // TODO: use ASSM::REGISTER_*
             result.append(ASSM::INDENT).append("addl ").append(this->right->toASM()).append(", %eax\n");
         }else if(this->op == "-"){
             // TODO: put subl in assm class
+            // TODO: use ASSM::REGISTER_*
             result.append(ASSM::INDENT).append("subl ").append(this->right->toASM()).append(", %eax\n");
         }else if(this->op == "/"){
             // TODO: put idivl in assm class
+            // TODO: use ASSM::REGISTER_*
             result.append(ASSM::INDENT).append("idivl ").append(this->right->toASM()).append(", %eax\n");
         }
     }else{

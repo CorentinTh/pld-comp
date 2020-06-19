@@ -165,10 +165,20 @@ antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx)
     return visit(ctx->expr()).as<ASTNode *>();
 }
 
-antlrcpp::Any CompVisitor::visitOperation(IFCCParser::OperationContext *ctx) {
+antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivContext *ctx) {
     ASTExpr *node = new ASTExpr();
 
-    node->op = ctx->OPERATOR()->getText();
+    node->op = ctx->OP->getText();
+    node->left = visit(ctx->expr(0)).as<ASTNode *>();
+    node->right = visit(ctx->expr(1)).as<ASTNode *>();
+
+    return (ASTNode *) node;
+}
+
+antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) {
+    ASTExpr *node = new ASTExpr();
+
+    node->op = ctx->OP->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
 

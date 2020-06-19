@@ -59,11 +59,15 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override {
+  virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitOperation(IFCCParser::OperationContext *ctx) override {
+  virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override {
     return visitChildren(ctx);
   }
 
