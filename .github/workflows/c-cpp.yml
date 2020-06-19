@@ -19,5 +19,6 @@ jobs:
         make
         cd ..
     - name: Unit test
-      run: npx comest
+      run: npx comest@0.2.0 --package comest
+
 
