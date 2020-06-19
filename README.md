@@ -41,15 +41,15 @@ Now you can run your binary file on your computer and see your program working.
 
 #### Grammar
 
-The grammar is written for antlr4, you can find the describing file under antlr4 folder with .g4 extension.
+The grammar is written for antlr4, you can find the describing file under antlr4 folder with `.g4` extension.
 
 #### Modules
 
-Variable Manager
+**Variable Manager** used to simplify variable management during compilation process
 
-ASSM
+**ASSM** //TODO 
 
-Logger
+**Logger** used to provide informations during compilation process
 
 #### Visitors
 
