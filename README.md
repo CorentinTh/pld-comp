@@ -23,7 +23,7 @@ This is a group project made by :
 * Marc Meillac
 * Balthazar Frolin
 
-We mostly works with pair programming doing iterative works and building our compiler step by step
+We mostly works with pair/group programming doing iterative works and building our compiler step by step
 
 ## User Manuel
 
@@ -45,11 +45,11 @@ The grammar is written for antlr4, you can find the describing file under antlr4
 
 #### Modules
 
-**Variable Manager** used to simplify variable management during compilation process
+* **Variable Manager** used to simplify variable management during compilation process
 
-**ASSM** //TODO 
+* **ASSM** //TODO 
 
-**Logger** used to provide informations during compilation process
+* **Logger** used to provide informations during compilation process
 
 #### Visitors
 
