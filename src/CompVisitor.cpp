@@ -52,8 +52,8 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     }
 
     //Generate the Epilogue
-    out.append(WHITESPACE + "popq %rbp\n");
-    out.append(WHITESPACE + "ret\n");
+    out.append(ASSM::INDENT + "popq %rbp\n");
+    out.append(ASSM::INDENT + "ret\n");
 
     return out;
 }
@@ -67,15 +67,15 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     out.append(functionLabel + ":\n");
 
     //Generate the Prologue
-    out.append(WHITESPACE + "pushq %rbp\n");
-    out.append(WHITESPACE + "movq %rsp, %rbp\n");
+    out.append(ASSM::INDENT + "pushq %rbp\n");
+    out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
 
     int paramOffset = 4;
     //Add params into variable Map
     for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
         string variableName = ctx->IDENTIFIER().at(i)->getText();
         string variableAddress = to_string(paramOffset);
-        variableManager.putVariableAtAddress(variableName, variableAddress);
+        variableManager->putVariableAtAddress(variableName, variableAddress);
         paramOffset += 4;
     }
 
@@ -83,13 +83,13 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
         if (visited.isNotNull()) {
-            out.append(WHITESPACE + visited.as<std::string>() + "\n");
+            out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
         }
     }
 
     //Generate the Epilogue
-    out.append(WHITESPACE + "popq %rbp\n");
-    out.append(WHITESPACE + "ret\n");
+    out.append(ASSM::INDENT + "popq %rbp\n");
+    out.append(ASSM::INDENT + "ret\n");
     return out;
 }
 
@@ -119,7 +119,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunctionCall(IFCCParser::MultiArgum
     std::stringstream stream;
     stream << std::hex << ctx->CONST().size();
     string cleanArgument = std::string(stream.str());
-    out.append(WHITESPACE + "add $0x" + cleanArgument + ", %rsp");
+    out.append(ASSM::INDENT + "add $0x" + cleanArgument + ", %rsp");
     return out;
 }
 
@@ -149,14 +149,11 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
                 ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     } else if (expression->type == VALUE) {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
     } else {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
                 .append("\n")
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
@@ -177,18 +174,15 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 
     string out;
     if (expression->type == EXPR) {
-        out.append(expression->toASM()).append(ASSM::INDENT).append(
+        out.append(expression->toASM()).append(
                 ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     } else if (expression->type == VALUE) {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
     } else {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
                 .append("\n")
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
@@ -232,7 +226,7 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     string out;
 
     if (expression->type != EXPR) {
-        out.append(ASSM::INDENT).append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_RETURN));
+        out.append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_RETURN));
     } else {
         out.append(expression->toASM()).append("\n");
     }

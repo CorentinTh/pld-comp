@@ -19,8 +19,9 @@ public:
   };
 
   enum {
-    RuleAxiom = 0, RuleProg = 1, RuleInstruction = 2, RuleAction = 3, RuleDeclaration = 4, 
-    RuleAffectation = 5, RuleReturnAct = 6, RuleExpr = 7
+    RuleAxiom = 0, RuleProg = 1, RuleFunctionDeclaration = 2, RuleFunctionCall = 3, 
+    RuleInstruction = 4, RuleAction = 5, RuleDeclaration = 6, RuleAffectation = 7, 
+    RuleReturnAct = 8, RuleExpr = 9
   };
 
   IFCCParser(antlr4::TokenStream *input);
@@ -35,6 +36,8 @@ public:
 
   class AxiomContext;
   class ProgContext;
+  class FunctionDeclarationContext;
+  class FunctionCallContext;
   class InstructionContext;
   class ActionContext;
   class DeclarationContext;
@@ -58,14 +61,83 @@ public:
   public:
     ProgContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    std::vector<InstructionContext *> instruction();
-    InstructionContext* instruction(size_t i);
+    std::vector<FunctionDeclarationContext *> functionDeclaration();
+    FunctionDeclarationContext* functionDeclaration(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
   ProgContext* prog();
+
+  class  FunctionDeclarationContext : public antlr4::ParserRuleContext {
+  public:
+    FunctionDeclarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    FunctionDeclarationContext() = default;
+    void copyFrom(FunctionDeclarationContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  ZeroArgumentsFunctionContext : public FunctionDeclarationContext {
+  public:
+    ZeroArgumentsFunctionContext(FunctionDeclarationContext *ctx);
+
+    antlr4::tree::TerminalNode *IDENTIFIER();
+    std::vector<InstructionContext *> instruction();
+    InstructionContext* instruction(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  MultiArgumentFunctionContext : public FunctionDeclarationContext {
+  public:
+    MultiArgumentFunctionContext(FunctionDeclarationContext *ctx);
+
+    std::vector<antlr4::tree::TerminalNode *> IDENTIFIER();
+    antlr4::tree::TerminalNode* IDENTIFIER(size_t i);
+    std::vector<InstructionContext *> instruction();
+    InstructionContext* instruction(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  FunctionDeclarationContext* functionDeclaration();
+
+  class  FunctionCallContext : public antlr4::ParserRuleContext {
+  public:
+    FunctionCallContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+   
+    FunctionCallContext() = default;
+    void copyFrom(FunctionCallContext *context);
+    using antlr4::ParserRuleContext::copyFrom;
+
+    virtual size_t getRuleIndex() const override;
+
+   
+  };
+
+  class  ZeroArgumentFunctionCallContext : public FunctionCallContext {
+  public:
+    ZeroArgumentFunctionCallContext(FunctionCallContext *ctx);
+
+    antlr4::tree::TerminalNode *IDENTIFIER();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  class  MultiArgumentFunctionCallContext : public FunctionCallContext {
+  public:
+    MultiArgumentFunctionCallContext(FunctionCallContext *ctx);
+
+    antlr4::tree::TerminalNode *IDENTIFIER();
+    std::vector<antlr4::tree::TerminalNode *> CONST();
+    antlr4::tree::TerminalNode* CONST(size_t i);
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
+  FunctionCallContext* functionCall();
 
   class  InstructionContext : public antlr4::ParserRuleContext {
   public:
@@ -85,6 +157,7 @@ public:
     virtual size_t getRuleIndex() const override;
     DeclarationContext *declaration();
     AffectationContext *affectation();
+    FunctionCallContext *functionCall();
     ReturnActContext *returnAct();
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
