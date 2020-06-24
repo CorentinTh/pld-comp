@@ -5,6 +5,14 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *ctx) override;
 
+    virtual antlrcpp::Any visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) override;
+
+    virtual antlrcpp::Any visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *ctx) override;
+
+    virtual antlrcpp::Any visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *ctx) override;
+
+    virtual antlrcpp::Any visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *ctx) override;
+
     virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override;
 
     virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *ctx) override;

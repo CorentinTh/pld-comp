@@ -23,6 +23,22 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override {
     return visitChildren(ctx);
   }

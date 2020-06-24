@@ -10,15 +10,36 @@ using namespace std;
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out = ".text\n";
-    out.append(".global main\n");
+    string out = "";
     out.append(visit(ctx->prog()).as<std::string>());
     return out;
 }
 
 antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     // Prologue
-    string out = "main:\n";
+    string out = "";
+
+    // Instructions
+    for (int i = 0; i < ctx->functionDeclaration().size(); i++) {
+        antlrcpp::Any visited = visit(ctx->functionDeclaration(i));
+        if (visited.isNotNull()) {
+            out.append(visited.as<std::string>() + "\n");
+        }
+    }
+
+    // Epilogue
+    return out;
+}
+
+//Declares a function with zero arguments such as int foo() { return 5 }
+antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) {
+    //Create the label
+    string functionLabel = ctx->IDENTIFIER()->getText();
+    string out = ".text\n";
+    out.append(".global ").append(functionLabel + "\n");
+    out.append(functionLabel + ":\n");
+
+    //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
 
@@ -26,14 +47,79 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     for (int i = 0; i < ctx->instruction().size(); i++) {
         antlrcpp::Any visited = visit(ctx->instruction(i));
         if (visited.isNotNull()) {
-            out.append(visited.as<std::string>() + "\n");
+            out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
         }
     }
 
-    // Epilogue
-    out.append(ASSM::INDENT + "popq %rbp\n");
-    out.append(ASSM::INDENT + "ret\n");
+    //Generate the Epilogue
+    out.append(WHITESPACE + "popq %rbp\n");
+    out.append(WHITESPACE + "ret\n");
 
+    return out;
+}
+
+//Declares a function with several arguments such as int foo(int a, int b, int c) { doStuff(); }
+antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *ctx) {
+    //Create the label
+    string functionLabel = ctx->IDENTIFIER().at(0)->getText();
+    string out = ".text\n";
+    out.append(".global ").append(functionLabel + "\n");
+    out.append(functionLabel + ":\n");
+
+    //Generate the Prologue
+    out.append(WHITESPACE + "pushq %rbp\n");
+    out.append(WHITESPACE + "movq %rsp, %rbp\n");
+
+    int paramOffset = 4;
+    //Add params into variable Map
+    for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
+        string variableName = ctx->IDENTIFIER().at(i)->getText();
+        string variableAddress = to_string(paramOffset);
+        variableManager.putVariableAtAddress(variableName, variableAddress);
+        paramOffset += 4;
+    }
+
+    // Instructions
+    for (int i = 0; i < ctx->instruction().size(); i++) {
+        antlrcpp::Any visited = visit(ctx->instruction(i));
+        if (visited.isNotNull()) {
+            out.append(WHITESPACE + visited.as<std::string>() + "\n");
+        }
+    }
+
+    //Generate the Epilogue
+    out.append(WHITESPACE + "popq %rbp\n");
+    out.append(WHITESPACE + "ret\n");
+    return out;
+}
+
+//Executes a function with no arguments
+antlrcpp::Any CompVisitor::visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *ctx) {
+    string functionLabel = ctx->IDENTIFIER()->getText();
+    string out = "call ";
+    out.append(functionLabel + "\n");
+
+    //Pas de nettoiage des arguments puisqu'il n'y a pas d'arguments
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *ctx) {
+    string functionLabel = ctx->IDENTIFIER()->getText();
+    string out = "";
+    //Mettre les arguments dans la stack de droite à gauche
+    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
+        const string value = ctx->CONST().at(i)->getText();
+        out.append("pushq $" + value + "\n");
+    }
+
+    //Appeller la fonction avec call
+    out.append(ASSM::INDENT + "call " + functionLabel + "\n");
+
+    //Nettoier les arguments
+    std::stringstream stream;
+    stream << std::hex << ctx->CONST().size();
+    string cleanArgument = std::string(stream.str());
+    out.append(WHITESPACE + "add $0x" + cleanArgument + ", %rsp");
     return out;
 }
 

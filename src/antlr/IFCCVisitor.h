@@ -23,6 +23,14 @@ public:
 
     virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *context) = 0;
 
+    virtual antlrcpp::Any visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *context) = 0;
+
+    virtual antlrcpp::Any visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *context) = 0;
+
+    virtual antlrcpp::Any visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *context) = 0;
+
+    virtual antlrcpp::Any visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *context) = 0;
+
     virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *context) = 0;
 
     virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *context) = 0;

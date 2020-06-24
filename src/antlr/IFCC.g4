@@ -3,12 +3,21 @@ grammar IFCC;
 axiom : prog
       ;
 
-prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
+prog: functionDeclaration+ ;
+
+functionDeclaration: 'int' IDENTIFIER '(' ')' '{' instruction* '}'                                        #zeroArgumentsFunction
+                   | 'int' IDENTIFIER '(' 'int' IDENTIFIER (', int' IDENTIFIER)* ')' '{' instruction* '}' #multiArgumentFunction
+	               ;
+
+functionCall: IDENTIFIER '(' ')'                    #zeroArgumentFunctionCall
+	        | IDENTIFIER '(' CONST (',' CONST)* ')' #multiArgumentFunctionCall
+	        ;
 
 instruction: action ';' ;
 
 action: declaration
       | affectation
+      | functionCall
       | returnAct
       ;
 
