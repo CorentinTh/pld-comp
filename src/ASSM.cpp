@@ -14,39 +14,39 @@ const string ASSM::INDENT = "  ";
 
 // Put into register
 
-string ASSM::registerToRegister(string regA, string regB) {
+string ASSM::registerToRegister(const string& regA, const string& regB) {
     return "movl " + regA + ", " + regB;
 }
 
-string ASSM::constToRegister(string number, string reg) {
+string ASSM::constToRegister(const string& number, const string& reg) {
     return registerToRegister(constRegister(number), reg);
 }
 
-string ASSM::addrToRegister(string address, string reg) {
+string ASSM::addrToRegister(const string& address, const string& reg) {
     return registerToRegister(addrRegister(address), reg);
 }
 
 // Put into address
 
-string ASSM::registerToAddr(string reg, string address) {
+string ASSM::registerToAddr(const string& reg, const string& address) {
     return registerToRegister(reg, addrRegister(address));
 }
 
-string ASSM::constToAddr(string number, string address) {
+string ASSM::constToAddr(const string& number, const string& address) {
     return registerToRegister(constRegister(number), addrRegister(address));
 }
 
 // Registers name translation
 
-string ASSM::addrRegister(string address) {
+string ASSM::addrRegister(const string& address) {
     return "-" + address + "(" + ASSM::BASE_POINTER + ")";
 }
 
-string ASSM::constRegister(string number) {
+string ASSM::constRegister(const string& number) {
     return "$" + number;
 }
 
-string ASSM::operation(string regLeft, string op, string regRight) {
+string ASSM::operation(const string& regLeft, const string& op, const string& regRight) {
     string keyword;
 
     if (op == "*") keyword = "imull ";
@@ -55,4 +55,8 @@ string ASSM::operation(string regLeft, string op, string regRight) {
     if (op == "-") keyword = "subl ";
 
     return string(keyword).append(regLeft).append(", ").append(regRight).append("\n");
+}
+
+string ASSM::operation(const string& op, const string& reg) {
+    return std::string(op).append(reg);
 }
