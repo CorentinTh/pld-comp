@@ -1,5 +1,5 @@
 name: Two Variable Division
-command: ./cmake-build-debug/pld-comp {file1}
+command: ./cmake-build-debug/pld-comp {file1} > input.s ; gcc input.s ; ./a.out
 assets:
   - type: file
     name: file1
@@ -11,19 +11,4 @@ assets:
           return c;
       }
 expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $8, -4(%rbp)
-      movl $2, -8(%rbp)
-      movl -4(%rbp), %eax
-      movl -8(%rbp), %ebx
-      idivl %ebx, %eax
-      movl %eax, -12(%rbp)
-      movl -12(%rbp), %eax
-      popq %rbp
-      ret
+  status: 4

@@ -1,5 +1,5 @@
 name: Operations with same priorities
-command: ./cmake-build-debug/pld-comp {file1}
+command: ./cmake-build-debug/pld-comp {file1} > input.s ; gcc input.s ; ./a.out
 assets:
   - type: file
     name: file1
@@ -13,24 +13,4 @@ assets:
         return d;
       }
 expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $17, -4(%rbp)
-      movl $42, -8(%rbp)
-      movl $34, -12(%rbp)
-      movl -4(%rbp), %eax
-      movl -8(%rbp), %ebx
-      addl %ebx, %eax
-      movl %eax, %edx
-      movl -12(%rbp), %ebx
-      movl %edx, %eax
-      subl %ebx, %eax
-      movl %eax, -16(%rbp)
-      movl -16(%rbp), %eax
-      popq %rbp
-      ret
+  status: 25

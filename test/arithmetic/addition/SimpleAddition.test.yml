@@ -1,5 +1,5 @@
 name: Simple Addition
-command: ./cmake-build-debug/pld-comp {file1}
+command: ./cmake-build-debug/pld-comp {file1} > input.s ; gcc input.s ; ./a.out
 assets:
 - type: file
   name: file1
@@ -9,22 +9,5 @@ assets:
         return a;
     }
 expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $2, %eax
-      movl $5, %ebx
-      addl %ebx, %eax
-      movl %eax, %edx
-      movl $6, %ebx
-      movl %edx, %eax
-      addl %ebx, %eax
-      movl %eax, -4(%rbp)
-      movl -4(%rbp), %eax
-      popq %rbp
-      ret
+  status: 13
 

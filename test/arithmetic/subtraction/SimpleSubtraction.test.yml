@@ -9,24 +9,6 @@ assets:
         return a;
     }
 expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $10, %eax
-      movl $5, %ebx
-      subl %ebx, %eax
-      movl %eax, %edx
-      movl $4, %ebx
-      movl %edx, %eax
-      subl %ebx, %eax
-      movl %eax, -4(%rbp)
-      movl -4(%rbp), %eax
-      popq %rbp
-      ret
-
+  status: 1
 
 
