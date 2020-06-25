@@ -20,6 +20,8 @@
 // First, we browse all the left nodes
 // Next, we browse all the right nodes
 // Finally, we handle the current node
+
+// TODO: simplify this by pushing the specific logic of ASTValue and ASTIdentifier dedicated toAST method (use a new "regOut" argument)
 string ASTExpr::toASM() {
     string result;
 
@@ -71,9 +73,7 @@ string ASTExpr::toASM() {
     // If we are a left expression from our parent, put the result in register A
     // If we are a right expression from our parent, put the result in register B
     string outputReg = isRootNode || isLeftExpr ? ASSM::REGISTER_A : ASSM::REGISTER_B;
-    string memberReg = outputReg == ASSM::REGISTER_A ? ASSM::REGISTER_B : ASSM::REGISTER_A;
-
-    result.append(ASSM::INDENT).append(ASSM::operation(memberReg, this->op, outputReg));
+    result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_A, this->op, ASSM::REGISTER_B, outputReg));
 
     return result;
 }
