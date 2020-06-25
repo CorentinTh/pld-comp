@@ -3,6 +3,7 @@ lexer grammar IFCCLexer;
 IF : 'if' ;
 ELSE : 'else' ;
 WHILE : 'while' ;
+DO : 'do' ;
 RETURN : 'return' ;
 
 OPEN_PAR : '(' ;

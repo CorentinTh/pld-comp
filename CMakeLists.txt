@@ -8,14 +8,14 @@ include_directories(src/antlr)
 
 add_executable(
         pld-comp
-        src/antlr/IFCCBaseVisitor.cpp
-        src/antlr/IFCCBaseVisitor.h
+        src/antlr/IFCCParserBaseVisitor.cpp
+        src/antlr/IFCCParserBaseVisitor.h
         src/antlr/IFCCLexer.cpp
         src/antlr/IFCCLexer.h
-        src/antlr/IFCCVisitor.cpp
-        src/antlr/IFCCVisitor.h
-        src/antlr/IFCC.cpp
-        src/antlr/IFCC.h
+        src/antlr/IFCCParserVisitor.cpp
+        src/antlr/IFCCParserVisitor.h
+        src/antlr/IFCCParser.cpp
+        src/antlr/IFCCParser.h
         src/CompVisitor.cpp
         src/CompVisitor.h
         src/Logger.h

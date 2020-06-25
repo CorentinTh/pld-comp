@@ -10,7 +10,7 @@ using namespace std;
 
 VariableManager *variableManager = VariableManager::getInstance();
 
-antlrcpp::Any CompVisitor::visitAxiom(IFCC::AxiomContext *ctx) {
+antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
     string out = ".text\n";
     out.append(".global main\n");
 
@@ -25,11 +25,11 @@ antlrcpp::Any CompVisitor::visitAxiom(IFCC::AxiomContext *ctx) {
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitGlobalItem(IFCC::GlobalItemContext *ctx) {
+antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
     return visit(ctx->children.at(0)).as<string>();
 }
 
-antlrcpp::Any CompVisitor::visitFunction(IFCC::FunctionContext *ctx) {
+antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     // Prologue
     string out = "main:\n";
     out.append(ASSM::INDENT + "pushq %rbp\n");
@@ -44,15 +44,15 @@ antlrcpp::Any CompVisitor::visitFunction(IFCC::FunctionContext *ctx) {
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitInstruction(IFCC::InstructionContext *ctx) {
+antlrcpp::Any CompVisitor::visitInstruction(IFCCParser::InstructionContext *ctx) {
     return visit(ctx->action());
 }
 
-antlrcpp::Any CompVisitor::visitAction(IFCC::ActionContext *ctx) {
+antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
     return visit(ctx->children.at(0));
 }
 
-antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCC::DeclarationAffectationContext *ctx) {
+antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
 
     if (variableManager->variableExists(variableName)) {
@@ -84,7 +84,7 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCC::DeclarationAffectat
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitAffectation(IFCC::AffectationContext *ctx) {
+antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
     // TODO: better expression parsing
     const string variableName = ctx->IDENTIFIER()->getText();
 
@@ -116,7 +116,7 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCC::AffectationContext *ctx) {
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCC::DeclarationEmptyContext *ctx) {
+antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
     const string variableName = ctx->IDENTIFIER()->getText();
 
     if (variableManager->variableExists(variableName)) {
@@ -130,7 +130,7 @@ antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCC::DeclarationEmptyContext *
     return nullptr;
 }
 
-antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCC::DeclarationMultiContext *ctx) {
+antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) {
     // Instructions
     for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
         if (ctx->IDENTIFIER(i) != nullptr) {
@@ -148,7 +148,7 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCC::DeclarationMultiContext *
 }
 
 
-antlrcpp::Any CompVisitor::visitReturnAct(IFCC::ReturnActContext *ctx) {
+antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
     string out;
 
@@ -162,24 +162,24 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCC::ReturnActContext *ctx) {
 }
 
 
-antlrcpp::Any CompVisitor::visitIdentifier(IFCC::IdentifierContext *ctx) {
+antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
     ASTIdentifier *node = new ASTIdentifier();
     node->identifier = ctx->IDENTIFIER()->getText();
     return (ASTNode *) node;
 }
 
-antlrcpp::Any CompVisitor::visitConst(IFCC::ConstContext *ctx) {
+antlrcpp::Any CompVisitor::visitConst(IFCCParser::ConstContext *ctx) {
     ASTValue *node = new ASTValue();
     node->value = ctx->CONST()->getText();
     return (ASTNode *) node;
 }
 
-antlrcpp::Any CompVisitor::visitParenthesis(IFCC::ParenthesisContext *ctx) {
+antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx) {
     // TODO: handle parenthesis
     return visit(ctx->expr()).as<ASTNode *>();
 }
 
-antlrcpp::Any CompVisitor::visitIfStmt(IFCC::IfStmtContext *ctx) {
+antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
     string out;
     string endIFTag;
     string elseTag;
@@ -218,7 +218,7 @@ antlrcpp::Any CompVisitor::visitIfStmt(IFCC::IfStmtContext *ctx) {
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitBlock(IFCC::BlockContext *ctx) {
+antlrcpp::Any CompVisitor::visitBlock(IFCCParser::BlockContext *ctx) {
     string out;
 
     for (int i = 0; i < ctx->statement().size(); i++) {
@@ -231,15 +231,15 @@ antlrcpp::Any CompVisitor::visitBlock(IFCC::BlockContext *ctx) {
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitStatement(IFCC::StatementContext *ctx) {
+antlrcpp::Any CompVisitor::visitStatement(IFCCParser::StatementContext *ctx) {
     return visit(ctx->children.at(0));
 }
 
-antlrcpp::Any CompVisitor::visitType(IFCC::TypeContext *ctx) {
+antlrcpp::Any CompVisitor::visitType(IFCCParser::TypeContext *ctx) {
     return antlrcpp::Any();
 }
 
-antlrcpp::Any CompVisitor::visitOperationBinary(IFCC::OperationBinaryContext *ctx) {
+antlrcpp::Any CompVisitor::visitOperationBinary(IFCCParser::OperationBinaryContext *ctx) {
     ASTExpr *node = new ASTExpr();
 
     node->op = ctx->op->getText();
@@ -251,6 +251,14 @@ antlrcpp::Any CompVisitor::visitOperationBinary(IFCC::OperationBinaryContext *ct
     return (ASTNode *) node;
 }
 
-antlrcpp::Any CompVisitor::visitOperationUnary(IFCC::OperationUnaryContext *ctx) {
+antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext *ctx) {
     return antlrcpp::Any();
+}
+
+antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
+    string out;
+    string conditionTag;
+
+
+    return out;
 }

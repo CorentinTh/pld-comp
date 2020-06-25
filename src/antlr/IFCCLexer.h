@@ -12,12 +12,12 @@
 class  IFCCLexer : public antlr4::Lexer {
 public:
   enum {
-    IF = 1, ELSE = 2, WHILE = 3, RETURN = 4, OPEN_PAR = 5, CLOSE_PAR = 6, 
-    OPEN_BRACE = 7, CLOSE_BRACE = 8, OPEN_BRACKET = 9, CLOSE_BRACKET = 10, 
-    SEMICOLON = 11, COMMA = 12, INT = 13, CHAR = 14, MULT = 15, DIV = 16, 
-    PLUS = 17, MIN = 18, MOD = 19, EQ = 20, NEQ = 21, DEQ = 22, GT = 23, 
-    LT = 24, GE = 25, LE = 26, AND = 27, DAND = 28, OR = 29, DOR = 30, CONST = 31, 
-    IDENTIFIER = 32, OPERATOR = 33, COMMENT = 34, DIRECTIVE = 35, WS = 36
+    IF = 1, ELSE = 2, WHILE = 3, DO = 4, RETURN = 5, OPEN_PAR = 6, CLOSE_PAR = 7, 
+    OPEN_BRACE = 8, CLOSE_BRACE = 9, OPEN_BRACKET = 10, CLOSE_BRACKET = 11, 
+    SEMICOLON = 12, COMMA = 13, INT = 14, CHAR = 15, MULT = 16, DIV = 17, 
+    PLUS = 18, MIN = 19, MOD = 20, EQ = 21, NEQ = 22, DEQ = 23, GT = 24, 
+    LT = 25, GE = 26, LE = 27, AND = 28, DAND = 29, OR = 30, DOR = 31, CONST = 32, 
+    IDENTIFIER = 33, OPERATOR = 34, COMMENT = 35, DIRECTIVE = 36, WS = 37
   };
 
   IFCCLexer(antlr4::CharStream *input);

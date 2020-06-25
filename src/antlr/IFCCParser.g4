@@ -1,4 +1,4 @@
-parser grammar IFCC;
+parser grammar IFCCParser;
 
 options {
     tokenVocab = IFCCLexer;
@@ -30,6 +30,7 @@ action
 statement
     : instruction
     | ifStmt
+    | whileStmt
     | block
     ;
 
@@ -53,6 +54,11 @@ affectation
 
 ifStmt
     : IF OPEN_PAR condition=expr CLOSE_PAR actionIF=statement (ELSE actionELSE=statement)?
+    ;
+
+whileStmt returns[bool isDoWhile]
+    : WHILE OPEN_PAR condition=expr CLOSE_PAR statement         {$isDoWhile = false;}
+    | DO statement OPEN_PAR condition=expr CLOSE_PAR SEMICOLON  {$isDoWhile = true;}
     ;
 
 returnAct
