@@ -39,7 +39,7 @@ string ASTExpr::toASM() {
         // expression calculation
         if(this->right->type == EXPR) {
             result.append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D))
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_C))
                     .append("\n");
         }
     }
@@ -54,9 +54,9 @@ string ASTExpr::toASM() {
             result.append(this->right->toASM());
 
             // As the right member is an expression, the register A as been deleted by the expression calculation
-            // We need to restore it's value to the previously stashed value present in register D
+            // We need to restore it's value to the previously stashed value present in register C
             result.append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A))
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_C, ASSM::REGISTER_A))
                     .append("\n");
         }
     }
