@@ -27,6 +27,8 @@ public:
 
     virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *context) = 0;
 
+    virtual antlrcpp::Any visitBlock(IFCCParser::BlockContext *context) = 0;
+
     virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) = 0;
 
     virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *context) = 0;
@@ -34,6 +36,8 @@ public:
     virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *context) = 0;
 
     virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *context) = 0;
+
+    virtual antlrcpp::Any visitIfStmt(IFCCParser::IfStmtContext *context) = 0;
 
     virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) = 0;
 

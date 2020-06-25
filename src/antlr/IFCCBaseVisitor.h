@@ -31,6 +31,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitBlock(IFCCParser::BlockContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -44,6 +48,10 @@ public:
   }
 
   virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIfStmt(IFCCParser::IfStmtContext *ctx) override {
     return visitChildren(ctx);
   }
 

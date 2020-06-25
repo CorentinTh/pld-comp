@@ -14,13 +14,14 @@ public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
     T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    CONST = 15, IDENTIFIER = 16, OPERATOR = 17, COMMENT = 18, DIRECTIVE = 19, 
-    WS = 20
+    T__14 = 15, T__15 = 16, CONST = 17, IDENTIFIER = 18, OPERATOR = 19, 
+    COMMENT = 20, DIRECTIVE = 21, WS = 22
   };
 
   enum {
-    RuleAxiom = 0, RuleProg = 1, RuleInstruction = 2, RuleAction = 3, RuleDeclaration = 4, 
-    RuleAffectation = 5, RuleReturnAct = 6, RuleExpr = 7
+    RuleAxiom = 0, RuleProg = 1, RuleInstruction = 2, RuleAction = 3, RuleBlock = 4, 
+    RuleDeclaration = 5, RuleAffectation = 6, RuleIfStmt = 7, RuleReturnAct = 8, 
+    RuleExpr = 9
   };
 
   IFCCParser(antlr4::TokenStream *input);
@@ -37,8 +38,10 @@ public:
   class ProgContext;
   class InstructionContext;
   class ActionContext;
+  class BlockContext;
   class DeclarationContext;
   class AffectationContext;
+  class IfStmtContext;
   class ReturnActContext;
   class ExprContext; 
 
@@ -85,6 +88,8 @@ public:
     virtual size_t getRuleIndex() const override;
     DeclarationContext *declaration();
     AffectationContext *affectation();
+    IfStmtContext *ifStmt();
+    BlockContext *block();
     ReturnActContext *returnAct();
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
@@ -92,6 +97,19 @@ public:
   };
 
   ActionContext* action();
+
+  class  BlockContext : public antlr4::ParserRuleContext {
+  public:
+    BlockContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    std::vector<ActionContext *> action();
+    ActionContext* action(size_t i);
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  BlockContext* block();
 
   class  DeclarationContext : public antlr4::ParserRuleContext {
   public:
@@ -146,6 +164,22 @@ public:
   };
 
   AffectationContext* affectation();
+
+  class  IfStmtContext : public antlr4::ParserRuleContext {
+  public:
+    IFCCParser::ActionContext *actionIF = nullptr;;
+    IFCCParser::ActionContext *actionELSE = nullptr;;
+    IfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    ExprContext *expr();
+    std::vector<ActionContext *> action();
+    ActionContext* action(size_t i);
+
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+   
+  };
+
+  IfStmtContext* ifStmt();
 
   class  ReturnActContext : public antlr4::ParserRuleContext {
   public:
