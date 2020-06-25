@@ -26,60 +26,54 @@ string ASTExpr::toASM() {
     // All left nodes browsing
     if (this->left != nullptr) {
         if (this->left->type != EXPR) {
-            result
-                    .append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A))
-                    .append("\n");
+            result.append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A))
+                .append("\n");
         } else {
             result.append(this->left->toASM());
+        }
+
+        // If the right member is an expression we need to stash the register A to avoid it be deleted by the
+        // expression calculation
+        if(this->right->type == EXPR) {
+            result.append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D))
+                    .append("\n");
         }
     }
 
     // All right nodes browsing
     if (this->right != nullptr) {
         if (this->right->type != EXPR) {
-            result
-                    .append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B))
-                    .append("\n");
+            result.append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B))
+                .append("\n");
         } else {
             result.append(this->right->toASM());
+
+            // As the right member is an expression, the register A as been deleted by the expression calculation
+            // We need to restore it's value to the previously stashed value present in register D
+            result.append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A))
+                    .append("\n");
         }
     }
 
     // Handle current node
-    if (this->type == EXPR) {
-        bool isRootNode = this->parent == nullptr;
-        bool isLeftExpr = false;
-        if (!isRootNode) {
-            ASTExpr *parentExpr = (ASTExpr *) this->parent;
-            isLeftExpr = parentExpr->left == this;
-        }
+    bool isRootNode = this->parent == nullptr;
+    bool isLeftExpr = false;
 
-        // If left branch put the result in register A, if right branch put the result in register B
-        // If we are the root node put the result in register A for legacy integration
-        string outputReg = isRootNode || isLeftExpr ? ASSM::REGISTER_A : ASSM::REGISTER_B;
-
-        // If my left branch is an expression, an operation result has been stashed to register D
-        if (this->left->type == EXPR) {
-            // Pop operation result from register D to register A
-            result
-                    .append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, ASSM::REGISTER_A))
-                    .append("\n");
-        }
-
-        result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_B, this->op, outputReg));
-
-        // If I am a left expression I have to stash the operation result to register D to avoid its deletion by the right branch
-        if (isLeftExpr && !isRootNode) {
-            // Stash operation result from register A to register D
-            result
-                    .append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D))
-                    .append("\n");
-        }
+    if (!isRootNode) {
+        ASTExpr *parentExpr = (ASTExpr *) this->parent;
+        isLeftExpr = parentExpr->left == this;
     }
+
+    // If we are a left expression from our parent, put the result in register A
+    // If we are a right expression from our parent, put the result in register B
+    string outputReg = isRootNode || isLeftExpr ? ASSM::REGISTER_A : ASSM::REGISTER_B;
+    string memberReg = outputReg == ASSM::REGISTER_A ? ASSM::REGISTER_B : ASSM::REGISTER_A;
+
+    result.append(ASSM::INDENT).append(ASSM::operation(memberReg, this->op, outputReg));
 
     return result;
 }
