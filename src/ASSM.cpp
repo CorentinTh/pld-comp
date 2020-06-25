@@ -66,10 +66,11 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
 
     if (op == "/") {
         if (regLeft != ASSM::REGISTER_A) {
-            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n").append(
-                            ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n").append(ASSM::INDENT);
+            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n")
+                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append(
+                            "\n")
+                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n")
+                    .append(ASSM::INDENT);
         }
 
         out.append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT);
@@ -79,9 +80,9 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
             out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, regOut)).append("\n");
         }
     }
+    else if (op == "*") out = string("imull ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == "+") out = string("addl ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == "-") out = string("subl ").append(regSource).append(", ").append(regDest).append("\n");
-    else if (op == "*") out = string("imull ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == ">") out = ASSM::generateBooleanOperation("setg", regSource, regDest);
     else if (op == "<") out = ASSM::generateBooleanOperation("setl", regSource, regDest);
     else if (op == ">=") out = ASSM::generateBooleanOperation("setge", regSource, regDest);
