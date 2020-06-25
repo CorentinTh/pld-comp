@@ -75,6 +75,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) override {
     return visitChildren(ctx);
   }

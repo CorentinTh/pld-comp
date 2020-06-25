@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include "CompVisitor.h"
 #include "ASSM.h"
 #include "AST.h"
@@ -16,7 +17,6 @@ antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
-    // Prologue
     string out = "";
 
     // Instructions
@@ -27,7 +27,6 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
         }
     }
 
-    // Epilogue
     return out;
 }
 
@@ -35,9 +34,12 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
 antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) {
     //Create the label
     string functionLabel = ctx->IDENTIFIER()->getText();
-    string out = ".text\n";
+    string out = "";
     out.append(".global ").append(functionLabel + "\n");
     out.append(functionLabel + ":\n");
+
+    //Insert scope to the stack
+    variableManager->pushScope(functionLabel);
 
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
@@ -50,6 +52,9 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
             out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
         }
     }
+
+    //Remove scope
+    variableManager->popScope();
 
     //Generate the Epilogue
     out.append(ASSM::INDENT + "popq %rbp\n");
@@ -66,6 +71,9 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     out.append(".global ").append(functionLabel + "\n");
     out.append(functionLabel + ":\n");
 
+    //Insert scope to the stack
+    variableManager->pushScope(functionLabel);
+
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
@@ -73,10 +81,16 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     int paramOffset = 4;
     //Add params into variable Map
     for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
-        string variableName = ctx->IDENTIFIER().at(i)->getText();
+        string prefix = variableManager->generatePrefix();
+        string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
         string variableAddress = to_string(paramOffset);
         variableManager->putVariableAtAddress(variableName, variableAddress);
         paramOffset += 4;
+
+        //foo(a,b,c)
+        // a -> %rbp - 4
+        // b -> %rbp - 8
+        // c -> %rbp - 12
     }
 
     // Instructions
@@ -86,6 +100,9 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
             out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
         }
     }
+
+    //Remove scope
+    variableManager->popScope();
 
     //Generate the Epilogue
     out.append(ASSM::INDENT + "popq %rbp\n");
@@ -117,7 +134,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunctionCall(IFCCParser::MultiArgum
 
     //Nettoier les arguments
     std::stringstream stream;
-    stream << std::hex << ctx->CONST().size();
+    stream << std::hex << ctx->CONST().size() * 4;
     string cleanArgument = std::string(stream.str());
     out.append(ASSM::INDENT + "add $0x" + cleanArgument + ", %rsp");
     return out;
@@ -132,7 +149,9 @@ antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
 
     if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
@@ -162,7 +181,10 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
 
 antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
     // TODO: better expression parsing
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
+
 
     if (!variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is not defined");
@@ -190,7 +212,9 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
 
     if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
@@ -207,7 +231,9 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiCon
     // Instructions
     for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
         if (ctx->IDENTIFIER(i) != nullptr) {
-            const string variableName = ctx->IDENTIFIER(i)->getText();
+            const string prefix = variableManager->generatePrefix();
+            const string baseVariableName = ctx->IDENTIFIER(i)->getText();
+            const string variableName = prefix + baseVariableName;
             if (variableManager->variableExists(variableName)) {
                 Logger::error("Variable " + variableName + " is already defined");
                 exit(EXIT_FAILURE);
@@ -274,4 +300,8 @@ antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinu
     node->right->parent = (ASTNode *) node;
 
     return (ASTNode *) node;
+}
+
+antlrcpp::Any CompVisitor::visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *ctx) {
+    return visit(ctx->functionCall());
 }

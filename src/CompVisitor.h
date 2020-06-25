@@ -37,4 +37,5 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) override;
 
+    virtual antlrcpp::Any visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *ctx) override;
 };

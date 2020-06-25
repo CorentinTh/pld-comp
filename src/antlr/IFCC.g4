@@ -35,6 +35,7 @@ expr: expr OP=( '*' | '/' ) expr        # operationMultDiv
     | CONST                             # const
     | IDENTIFIER                        # identifier
     | '(' expr ')'                      # parenthesis
+    | functionCall                      # functionEvaluation
     ;
 
 CONST : [0-9]+ ;

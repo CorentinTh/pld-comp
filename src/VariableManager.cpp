@@ -17,5 +17,27 @@ string VariableManager::getNextAddress() {
 }
 
 void VariableManager::putVariableAtAddress(string variableName, string variableAddress) {
+    cout << "Variable Name is " << variableName << endl;
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
+}
+
+void VariableManager::pushScope(string scope) {
+    scopeStack.push_back(scope);
+}
+
+void VariableManager::popScope() {
+    scopeStack.pop_back();
+}
+
+string VariableManager::generatePrefix() {
+    string prefix = "";
+    vector<string>::iterator it;
+    for(it = scopeStack.begin(); it != scopeStack.end(); it++) {
+        string currentScope = *it;
+        prefix.append(currentScope+"_");
+    }
+    if(scopeStack.size() != 1) {
+        return prefix.substr(0, prefix.size()-1); //remove last _
+    }
+    return prefix;
 }

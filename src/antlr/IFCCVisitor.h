@@ -49,6 +49,8 @@ public:
 
     virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;
 
+    virtual antlrcpp::Any visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *context) = 0;
+
     virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) = 0;
 
     virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) = 0;

@@ -6,13 +6,17 @@
 #define PLD_COMP_VARIABLEMANAGER_H
 
 #include <string>
+#include <vector>
 #include <map>
+#include <iostream>
 
 using namespace std;
 
 class VariableManager {
 private:
     map<string, string> variableAddressMap;
+
+    vector<string> scopeStack;
 
     VariableManager() = default;
 
@@ -30,6 +34,12 @@ public:
     string getNextAddress();
 
     void putVariableAtAddress(string variableName, string variableAddress);
+
+    void pushScope(string scope);
+
+    void popScope();
+
+    string generatePrefix();
 };
 
 

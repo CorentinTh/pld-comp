@@ -261,6 +261,14 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  FunctionEvaluationContext : public ExprContext {
+  public:
+    FunctionEvaluationContext(ExprContext *ctx);
+
+    FunctionCallContext *functionCall();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  OperationPlusMinusContext : public ExprContext {
   public:
     OperationPlusMinusContext(ExprContext *ctx);
