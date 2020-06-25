@@ -22,7 +22,7 @@ execInDocker(){
 for var in "$@"
 do
     case "$var" in
-        g | generate) execInDocker antlr4 -visitor -no-listener -Dlanguage=Cpp src/antlr/IFCC.g4;;
+        g | generate) execInDocker antlr4 -visitor -no-listener -Dlanguage=Cpp src/antlr/IFCC*.g4;;
         c | compile)  mkdir -p build ; execInDocker clang++ -Wno-everything -I /usr/include/antlr4-runtime -o build/exe src/*.cpp src/antlr/*.cpp -lantlr4-runtime;;
         e | execute)  execInDocker ./build/exe input.c;;
         *)            echo "Error: unknown argument '$var'"

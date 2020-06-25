@@ -9,8 +9,8 @@ axiom
     ;
 
 globalItem
-    : function
-    | declaration
+    : declaration
+    | function
     ;
 
 function
@@ -60,15 +60,15 @@ returnAct
     ;
 
 expr
-    : expr op=MULT expr     # operation
-    | expr op=DIV  expr     # operation
-    | expr op=MOD  expr     # operation
-    | expr op=PLUS expr     # operation
-    | expr op=MIN  expr     # operation
-    | expr op=MIN  expr     # operation
-    | CONST                 # const
-    | IDENTIFIER            # identifier
-    | '(' expr ')'          # parenthesis
+    : expr op=MULT expr       # operationBinary
+    | expr op=DIV  expr       # operationBinary
+    | expr op=MOD  expr       # operationBinary
+    | expr op=PLUS expr       # operationBinary
+    | expr op=MIN  expr       # operationBinary
+    | op=MIN  expr            # operationUnary
+    | CONST                   # const
+    | IDENTIFIER              # identifier
+    | OPEN_PAR expr CLOSE_PAR # parenthesis
     ;
 
 

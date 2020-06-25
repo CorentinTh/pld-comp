@@ -12,10 +12,10 @@ add_executable(
         src/antlr/IFCCBaseVisitor.h
         src/antlr/IFCCLexer.cpp
         src/antlr/IFCCLexer.h
-        src/antlr/IFCCParser.cpp
-        src/antlr/IFCCParser.h
         src/antlr/IFCCVisitor.cpp
         src/antlr/IFCCVisitor.h
+        src/antlr/IFCC.cpp
+        src/antlr/IFCC.h
         src/CompVisitor.cpp
         src/CompVisitor.h
         src/Logger.h

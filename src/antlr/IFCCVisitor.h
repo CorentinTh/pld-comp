@@ -51,9 +51,11 @@ public:
 
     virtual antlrcpp::Any visitConst(IFCC::ConstContext *context) = 0;
 
+    virtual antlrcpp::Any visitOperationBinary(IFCC::OperationBinaryContext *context) = 0;
+
     virtual antlrcpp::Any visitParenthesis(IFCC::ParenthesisContext *context) = 0;
 
-    virtual antlrcpp::Any visitOperation(IFCC::OperationContext *context) = 0;
+    virtual antlrcpp::Any visitOperationUnary(IFCC::OperationUnaryContext *context) = 0;
 
 
 };

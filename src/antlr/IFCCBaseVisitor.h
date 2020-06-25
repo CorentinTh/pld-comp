@@ -79,11 +79,15 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitOperationBinary(IFCC::OperationBinaryContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitParenthesis(IFCC::ParenthesisContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitOperation(IFCC::OperationContext *ctx) override {
+  virtual antlrcpp::Any visitOperationUnary(IFCC::OperationUnaryContext *ctx) override {
     return visitChildren(ctx);
   }
 

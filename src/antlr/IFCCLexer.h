@@ -1,5 +1,5 @@
 
-// Generated from src/antlr/IFCC.g4 by ANTLR 4.7.2
+// Generated from src/antlr/IFCCLexer.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -12,10 +12,12 @@
 class  IFCCLexer : public antlr4::Lexer {
 public:
   enum {
-    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
-    T__14 = 15, T__15 = 16, CONST = 17, IDENTIFIER = 18, OPERATOR = 19, 
-    COMMENT = 20, DIRECTIVE = 21, WS = 22
+    IF = 1, ELSE = 2, WHILE = 3, RETURN = 4, OPEN_PAR = 5, CLOSE_PAR = 6, 
+    OPEN_BRACE = 7, CLOSE_BRACE = 8, OPEN_BRACKET = 9, CLOSE_BRACKET = 10, 
+    SEMICOLON = 11, COMMA = 12, INT = 13, CHAR = 14, MULT = 15, DIV = 16, 
+    PLUS = 17, MIN = 18, MOD = 19, EQ = 20, NEQ = 21, DEQ = 22, GT = 23, 
+    LT = 24, GE = 25, LE = 26, CONST = 27, IDENTIFIER = 28, OPERATOR = 29, 
+    COMMENT = 30, DIRECTIVE = 31, WS = 32
   };
 
   IFCCLexer(antlr4::CharStream *input);

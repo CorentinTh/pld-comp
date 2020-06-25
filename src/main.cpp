@@ -5,7 +5,7 @@
 
 #include "antlr4-runtime.h"
 #include "antlr/IFCCLexer.h"
-#include "antlr/IFCCParser.h"
+#include "antlr/IFCC.h"
 #include "antlr/IFCCBaseVisitor.h"
 #include "CompVisitor.h"
 
@@ -38,7 +38,7 @@ int main(int argn, const char **argv) {
 
     tokens.fill();
 
-    IFCCParser parser(&tokens);
+    IFCC parser(&tokens);
 
     MyErrorListener errorlistener;
     parser.removeErrorListeners();
