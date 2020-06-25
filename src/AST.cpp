@@ -69,7 +69,7 @@ string ASTExpr::toASM() {
                     .append("\n");
         }
 
-        result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_B, this->op, outputReg));
+        result.append(ASSM::operation(ASSM::REGISTER_B, this->op, outputReg));
 
         // If I am a left expression I have to stash the operation result to register D to avoid its deletion by the right branch
         if (isLeftExpr && !isRootNode) {

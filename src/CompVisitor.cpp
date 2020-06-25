@@ -197,7 +197,7 @@ antlrcpp::Any CompVisitor::visitIfStmt(IFCC::IfStmtContext *ctx) {
         out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
     } else {
         out.append(conditionAst->toASM());
-        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A);
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
     }
 
     if (ctx->actionELSE != nullptr) {

@@ -1,0 +1,17 @@
+name: (BOOL) Greater test between different variables (42 > 12)
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        int a = 42;
+        int b = 12;
+        return a > b;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 1

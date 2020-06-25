@@ -65,6 +65,16 @@ expr
     | expr op=MOD  expr       # operationBinary
     | expr op=PLUS expr       # operationBinary
     | expr op=MIN  expr       # operationBinary
+    | expr op=DEQ  expr       # operationBinary
+    | expr op=NEQ  expr       # operationBinary
+    | expr op=GT   expr       # operationBinary
+    | expr op=GE   expr       # operationBinary
+    | expr op=LT   expr       # operationBinary
+    | expr op=LE   expr       # operationBinary
+    | expr op=AND  expr       # operationBinary
+    | expr op=DAND expr       # operationBinary
+    | expr op=OR   expr       # operationBinary
+    | expr op=DOR  expr       # operationBinary
     | op=MIN  expr            # operationUnary
     | CONST                   # const
     | IDENTIFIER              # identifier

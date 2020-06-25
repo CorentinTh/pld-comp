@@ -16,8 +16,8 @@ public:
     OPEN_BRACE = 7, CLOSE_BRACE = 8, OPEN_BRACKET = 9, CLOSE_BRACKET = 10, 
     SEMICOLON = 11, COMMA = 12, INT = 13, CHAR = 14, MULT = 15, DIV = 16, 
     PLUS = 17, MIN = 18, MOD = 19, EQ = 20, NEQ = 21, DEQ = 22, GT = 23, 
-    LT = 24, GE = 25, LE = 26, CONST = 27, IDENTIFIER = 28, OPERATOR = 29, 
-    COMMENT = 30, DIRECTIVE = 31, WS = 32
+    LT = 24, GE = 25, LE = 26, AND = 27, DAND = 28, OR = 29, DOR = 30, CONST = 31, 
+    IDENTIFIER = 32, OPERATOR = 33, COMMENT = 34, DIRECTIVE = 35, WS = 36
   };
 
   enum {
@@ -298,6 +298,16 @@ public:
     antlr4::tree::TerminalNode *MOD();
     antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *MIN();
+    antlr4::tree::TerminalNode *DEQ();
+    antlr4::tree::TerminalNode *NEQ();
+    antlr4::tree::TerminalNode *GT();
+    antlr4::tree::TerminalNode *GE();
+    antlr4::tree::TerminalNode *LT();
+    antlr4::tree::TerminalNode *LE();
+    antlr4::tree::TerminalNode *AND();
+    antlr4::tree::TerminalNode *DAND();
+    antlr4::tree::TerminalNode *OR();
+    antlr4::tree::TerminalNode *DOR();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
