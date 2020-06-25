@@ -57,6 +57,7 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     variableManager->popScope();
 
     //Generate the Epilogue
+    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
 
@@ -105,6 +106,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     variableManager->popScope();
 
     //Generate the Epilogue
+    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
     return out;

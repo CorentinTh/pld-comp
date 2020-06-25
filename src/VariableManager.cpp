@@ -17,7 +17,6 @@ string VariableManager::getNextAddress() {
 }
 
 void VariableManager::putVariableAtAddress(string variableName, string variableAddress) {
-    cout << "Variable Name is " << variableName << endl;
     variableAddressMap.insert(pair<string, string>(variableName, variableAddress));
 }
 
@@ -34,7 +33,7 @@ string VariableManager::generatePrefix() {
     vector<string>::iterator it;
     for(it = scopeStack.begin(); it != scopeStack.end(); it++) {
         string currentScope = *it;
-        prefix.append(currentScope+"_");
+        prefix.append(currentScope+":");
     }
     if(scopeStack.size() != 1) {
         return prefix.substr(0, prefix.size()-1); //remove last _

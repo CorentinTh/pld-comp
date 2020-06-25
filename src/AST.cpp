@@ -103,7 +103,11 @@ string ASTValue::toASM() {
 string ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
     //TODO check existance
-    string variableAddress = variableManager->getAddress(this->identifier);
+    string baseVariableName = this->identifier;
+    string prefix = variableManager->generatePrefix();
+    string variableName = prefix.append(baseVariableName);
+
+    string variableAddress = variableManager->getAddress(variableName);
     return ASSM::addrRegister(variableAddress);
 }
 
