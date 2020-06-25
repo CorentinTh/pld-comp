@@ -1,5 +1,5 @@
 name: Simple Subtraction
-command: ./cmake-build-debug/pld-comp {file1}
+command: ./cmake-build-debug/pld-comp {file1} > input.s ; gcc input.s ; ./a.out
 assets:
 - type: file
   name: file1
