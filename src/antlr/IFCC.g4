@@ -23,7 +23,7 @@ declaration: 'int' IDENTIFIER                    # declarationEmpty
 
 affectation: IDENTIFIER '=' expr ;
 
-ifStmt: 'if' '(' expr ')' actionIF=action ('else' actionELSE=action)?;
+ifStmt: 'if' '(' condition=expr ')' actionIF=action ('else' actionELSE=action)?;
 
 returnAct: 'return' expr ;
 

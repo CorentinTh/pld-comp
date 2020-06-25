@@ -590,7 +590,7 @@ IFCCParser::IfStmtContext* IFCCParser::ifStmt() {
     setState(76);
     match(IFCCParser::T__2);
     setState(77);
-    expr(0);
+    dynamic_cast<IfStmtContext *>(_localctx)->condition = expr(0);
     setState(78);
     match(IFCCParser::T__3);
     setState(79);

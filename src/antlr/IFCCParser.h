@@ -167,6 +167,7 @@ public:
 
   class  IfStmtContext : public antlr4::ParserRuleContext {
   public:
+    IFCCParser::ExprContext *condition = nullptr;;
     IFCCParser::ActionContext *actionIF = nullptr;;
     IFCCParser::ActionContext *actionELSE = nullptr;;
     IfStmtContext(antlr4::ParserRuleContext *parent, size_t invokingState);
