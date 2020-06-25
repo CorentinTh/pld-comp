@@ -31,6 +31,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitStatement(IFCCParser::StatementContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitBlock(IFCCParser::BlockContext *ctx) override {
     return visitChildren(ctx);
   }

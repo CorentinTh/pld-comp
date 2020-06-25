@@ -30,7 +30,7 @@ add_executable(
         src/VariableManager.h
         src/VariableManager.cpp
         src/main.cpp
-)
+        src/TagManager.h)
 
 include(ExternalAntlr4Cpp.cmake)
 include_directories(${ANTLR4_INCLUDE_DIRS})

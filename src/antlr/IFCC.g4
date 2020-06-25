@@ -3,18 +3,20 @@ grammar IFCC;
 axiom : prog
       ;
 
-prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
+prog : 'int' 'main' '(' ')' '{' statement* '}' ;
 
 instruction: action ';' ;
 
 action: declaration
       | affectation
-      | ifStmt
-      | block
       | returnAct
       ;
 
-block: '{' (action)* '}';
+statement: instruction
+         | ifStmt
+         | block;
+
+block: '{' (statement)* '}';
 
 declaration: 'int' IDENTIFIER                    # declarationEmpty
            | 'int' IDENTIFIER '=' expr           # declarationAffectation
@@ -23,7 +25,7 @@ declaration: 'int' IDENTIFIER                    # declarationEmpty
 
 affectation: IDENTIFIER '=' expr ;
 
-ifStmt: 'if' '(' condition=expr ')' actionIF=action ('else' actionELSE=action)?;
+ifStmt: 'if' '(' condition=expr ')' actionIF=statement ('else' actionELSE=statement)?;
 
 returnAct: 'return' expr ;
 

@@ -29,4 +29,11 @@ class CompVisitor : public IFCCVisitor {
 
     virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) override;
 
+    virtual antlrcpp::Any visitIfStmt(IFCCParser::IfStmtContext *context) override;
+
+    virtual antlrcpp::Any visitBlock(IFCCParser::BlockContext *context) override;
+
+    virtual antlrcpp::Any visitStatement(IFCCParser::StatementContext *context) override;
+
+
 };

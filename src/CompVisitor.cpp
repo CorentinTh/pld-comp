@@ -4,6 +4,7 @@
 #include "AST.h"
 #include "Logger.h"
 #include "VariableManager.h"
+#include "TagManager.h"
 
 using namespace std;
 
@@ -23,8 +24,8 @@ antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
 
     // Instructions
-    for (int i = 0; i < ctx->instruction().size(); i++) {
-        antlrcpp::Any visited = visit(ctx->instruction(i));
+    for (int i = 0; i < ctx->statement().size(); i++) {
+        antlrcpp::Any visited = visit(ctx->statement(i));
         if (visited.isNotNull()) {
             out.append(visited.as<std::string>() + "\n");
         }
@@ -194,4 +195,60 @@ antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinu
     node->right->parent = (ASTNode *) node;
 
     return (ASTNode *) node;
+}
+
+antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
+    string out;
+    string endIFTag;
+    string elseTag;
+
+    if (ctx->actionELSE != nullptr) {
+        elseTag = TagManager::generateTag();
+        endIFTag = TagManager::generateTag();
+    } else {
+        endIFTag = TagManager::generateTag();
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A);
+    }
+
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("je ").append(elseTag).append("\n");
+    }else{
+        out.append(ASSM::INDENT).append("je ").append(endIFTag).append("\n");
+    }
+
+    out.append(visit(ctx->actionIF).as<string>()).append("\n");
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("jmp ").append(endIFTag).append("\n");
+        out.append(elseTag).append(":").append("\n");
+        out.append(visit(ctx->actionELSE).as<string>()).append("\n");
+    }
+
+    out.append(endIFTag).append(":");
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitBlock(IFCCParser::BlockContext *ctx) {
+    string out;
+
+    for (int i = 0; i < ctx->statement().size(); i++) {
+        antlrcpp::Any action = visit(ctx->statement(i));
+        if (action.isNotNull()) {
+            out.append(action.as<std::string>() + "\n");
+        }
+    }
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitStatement(IFCCParser::StatementContext *ctx) {
+    return visit(ctx->children.at(0));
 }
