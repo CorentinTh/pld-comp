@@ -1,0 +1,17 @@
+name: Long Addition
+command: ./cmake-build-debug/pld-comp {file1} > {asm.s} ; gcc {asm.s} -o {executable} ; {executable}
+assets:
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+          int a = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10;
+          return a;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: executable
+expect:
+  status: 55
+

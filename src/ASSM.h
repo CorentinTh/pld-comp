@@ -43,11 +43,11 @@ public:
 
     static string operation(const string& regLeft, const string& op, const string& regRight);
 
-    static string operation(const string& op, const string& reg);
-
     static string getRegisterL(const string& reg);
 
     static string generateBooleanOperation(const string &keyword, const string &regLeft, const string &regRight);
+
+    static string operation(string regLeft, string op, string regRight, string regOut);
 };
 
 

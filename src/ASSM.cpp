@@ -54,21 +54,45 @@ string ASSM::constRegister(const string &number) {
     return "$" + number;
 }
 
-string ASSM::operation(const string &regLeft, const string &op, const string &regRight) {
-    string result;
+string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
+    string out;
 
-    if (op == "*") return string(INDENT).append("imull ").append(regLeft).append(", ").append(regRight).append("\n");
-    if (op == "/") return string(INDENT).append("idivl ").append(regLeft).append(", ").append(regRight).append("\n");
-    if (op == "+") return string(INDENT).append("addl ").append(regLeft).append(", ").append(regRight).append("\n");
-    if (op == "-") return string(INDENT).append("subl ").append(regLeft).append(", ").append(regRight).append("\n");
-    if (op == ">") return ASSM::generateBooleanOperation("setg", regLeft, regRight);
-    if (op == "<") return ASSM::generateBooleanOperation("setl", regLeft, regRight);
-    if (op == ">=") return ASSM::generateBooleanOperation("setge", regLeft, regRight);
-    if (op == "<=") return ASSM::generateBooleanOperation("setle", regLeft, regRight);
-    if (op == "==") return ASSM::generateBooleanOperation("sete", regLeft, regRight);
-    if (op == "!=") return ASSM::generateBooleanOperation("setne", regLeft, regRight);
+    string keyword;
+    if (op == "*") keyword = "imull ";
+    if (op == "/") keyword = "idiv ";
+    if (op == "+") keyword = "addl ";
+    if (op == "-") keyword = "subl ";
 
-    return result;
+    if(op != "/") {
+        string regSource = regRight;
+        string regDest = regLeft;
+
+        if(regOut == regSource) {
+            regSource = regLeft;
+            regDest = regRight;
+        }
+
+        out = string(keyword).append(regSource).append(", ").append(regDest).append("\n");
+
+        if(regRight != regOut) {
+            out.append(ASSM::INDENT).append(registerToRegister(regDest, regOut)).append("\n");
+        }
+    } else {
+        if(regLeft != ASSM::REGISTER_A) {
+            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n").append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n").append(ASSM::INDENT);
+        }
+
+        out.append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT);
+        out.append(keyword).append(regRight).append("\n");
+
+        if(regOut != ASSM::REGISTER_A) {
+            out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, regOut)).append("\n");
+        }
+    }
+
+    return out;
 }
 
 string ASSM::generateBooleanOperation(const string &keyword, const string &regLeft, const string &regRight) {
