@@ -33,7 +33,7 @@ public:
 
     static string constRegister(string number);
 
-    static string operation(string regLeft, string op, string regRight);
+    static string operation(string regLeft, string op, string regRight, string regOut);
 };
 
 

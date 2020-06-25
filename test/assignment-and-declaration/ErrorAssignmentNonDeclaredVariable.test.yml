@@ -1,4 +1,4 @@
-name: Should return ERROR for assignment to non-declared variable
+name: Should return ERROR for assignment-and-declaration to non-declared variable
 command: ./cmake-build-debug/pld-comp {file1}
 assets:
 - type: file
