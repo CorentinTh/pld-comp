@@ -1,41 +1,45 @@
-#include "antlr/IFCCVisitor.h"
+#include "antlr/IFCCParserVisitor.h"
 
-class CompVisitor : public IFCCVisitor {
-    virtual antlrcpp::Any visitAxiom(IFCCParser::AxiomContext *ctx) override;
+class CompVisitor : public IFCCParserVisitor {
+    antlrcpp::Any visitAxiom(IFCCParser::AxiomContext *context) override;
 
-    virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *ctx) override;
+    antlrcpp::Any visitGlobalItem(IFCCParser::GlobalItemContext *context) override;
 
-    virtual antlrcpp::Any visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) override;
+    antlrcpp::Any visitFunction(IFCCParser::FunctionContext *context) override;
 
-    virtual antlrcpp::Any visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *ctx) override;
+    antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *context) override;
 
-    virtual antlrcpp::Any visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *ctx) override;
+    antlrcpp::Any visitAction(IFCCParser::ActionContext *context) override;
 
-    virtual antlrcpp::Any visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *ctx) override;
+    antlrcpp::Any visitStatement(IFCCParser::StatementContext *context) override;
 
-    virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *ctx) override;
+    antlrcpp::Any visitBlock(IFCCParser::BlockContext *context) override;
 
-    virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *ctx) override;
+    antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) override;
 
-    virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) override;
+    antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *context) override;
 
-    virtual antlrcpp::Any visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) override;
+    antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *context) override;
 
-    virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *ctx) override;
+    antlrcpp::Any visitType(IFCCParser::TypeContext *context) override;
 
-    virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *ctx) override;
+    antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *context) override;
 
-    virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *ctx) override;
+    antlrcpp::Any visitIfStmt(IFCCParser::IfStmtContext *context) override;
 
-    virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *ctx) override;
+    antlrcpp::Any visitWhileStmt(IFCCParser::WhileStmtContext *context) override;
 
-    virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *ctx) override;
+    antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) override;
 
-    virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *ctx) override;
+    antlrcpp::Any visitFunctionCall(IFCCParser::FunctionCallContext *context) override;
 
-    virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) override;
+    antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *context) override;
 
-    virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) override;
+    antlrcpp::Any visitConst(IFCCParser::ConstContext *context) override;
 
-    virtual antlrcpp::Any visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *ctx) override;
+    antlrcpp::Any visitOperationBinary(IFCCParser::OperationBinaryContext *context) override;
+
+    antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) override;
+
+    antlrcpp::Any visitOperationUnary(IFCCParser::OperationUnaryContext *context) override;
 };

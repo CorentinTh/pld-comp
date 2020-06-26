@@ -1,0 +1,23 @@
+name: (WHILE) Increment variable in while loop (while (a < 10))
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        int a = 0;
+        int b = 0;
+
+        while (a < 10) {
+          a = a + 1;
+          b = b + 2;
+        }
+
+        return b;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 20

@@ -1,0 +1,15 @@
+name: (BOOL) Equality test between same values (42 == 42)
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        return 42 == 42;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 1

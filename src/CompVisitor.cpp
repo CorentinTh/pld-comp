@@ -5,78 +5,34 @@
 #include "AST.h"
 #include "Logger.h"
 #include "VariableManager.h"
+#include "TagManager.h"
 
 using namespace std;
 
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out = "";
-    out.append(visit(ctx->prog()).as<std::string>());
-    return out;
-}
+    string out = ".text\n";
+    out.append(".global main\n");
 
-antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
-    string out = "";
+    for (auto item :ctx->globalItem()) {
+        antlrcpp::Any result = visit(item);
 
-    // Instructions
-    for (int i = 0; i < ctx->functionDeclaration().size(); i++) {
-        antlrcpp::Any visited = visit(ctx->functionDeclaration(i));
-        if (visited.isNotNull()) {
-            out.append(visited.as<std::string>() + "\n");
+        if (result.isNotNull()) {
+            out.append(result.as<std::string>());
         }
     }
 
     return out;
 }
 
-//Declares a function with zero arguments such as int foo() { return 5 }
-antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsFunctionContext *ctx) {
-    //Create the label
-    string functionLabel = ctx->IDENTIFIER()->getText();
-    string out = "";
-    out.append(".global ").append(functionLabel + "\n");
-    out.append(functionLabel + ":\n");
-
-    //Insert scope to the stack
-    variableManager->pushScope(functionLabel);
-
-    //Generate the Prologue
-    out.append(ASSM::INDENT + "pushq %rbp\n");
-    out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
-    out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
-
-    // Instructions
-    for (int i = 0; i < ctx->instruction().size(); i++) {
-        antlrcpp::Any visited = visit(ctx->instruction(i));
-        if (visited.isNotNull()) {
-            out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
-        }
-    }
-
-    //Remove scope
-    variableManager->popScope();
-
-    //Generate the Epilogue
-    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
-    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
-    out.append(ASSM::INDENT + "popq %rbp\n");
-    out.append(ASSM::INDENT + "ret\n");
-
-    int varAmount = variableManager->functionVariableAmount(functionLabel);
-    int stackSize = ( varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
-    int index;
-    while((index = out.find("{stackSize}")) != string::npos) {
-        out.replace(index, 11, "$" + to_string(stackSize));
-    }
-
-    return out;
+antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
+    return visit(ctx->children.at(0)).as<string>();
 }
 
-//Declares a function with several arguments such as int foo(int a, int b, int c) { doStuff(); }
-antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentFunctionContext *ctx) {
+antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     //Create the label
-    string functionLabel = ctx->IDENTIFIER().at(0)->getText();
+    string functionLabel = ctx->functionLabel->getText();
     string out = ".text\n";
     out.append(".global ").append(functionLabel + "\n");
     out.append(functionLabel + ":\n");
@@ -89,28 +45,19 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
     out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
 
-    int paramOffset = 4;
-    //Add params into variable Map
-    for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
-        string prefix = variableManager->generatePrefix();
-        string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
-        string variableAddress = to_string(paramOffset);
-        variableManager->putVariableAtAddress(variableName, variableAddress);
-        paramOffset += 4;
-
-        //foo(a,b,c)
-        // a -> %rbp - 4
-        // b -> %rbp - 8
-        // c -> %rbp - 12
-    }
-
-    // Instructions
-    for (int i = 0; i < ctx->instruction().size(); i++) {
-        antlrcpp::Any visited = visit(ctx->instruction(i));
-        if (visited.isNotNull()) {
-            out.append(ASSM::INDENT + visited.as<std::string>() + "\n");
+    if(ctx->IDENTIFIER().size() > 0) {
+        //Add params into variable Map
+        int paramOffset = 4;
+        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+            string prefix = variableManager->generatePrefix();
+            string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
+            string variableAddress = to_string(paramOffset);
+            variableManager->putVariableAtAddress(variableName, variableAddress);
+            paramOffset += 4;
         }
     }
+
+    out.append(visit(ctx->block()).as<std::string>());
 
     //Remove scope
     variableManager->popScope();
@@ -128,35 +75,6 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
         out.replace(index, 11, "$" + to_string(stackSize));
     }
 
-    return out;
-}
-
-//Executes a function with no arguments
-antlrcpp::Any CompVisitor::visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumentFunctionCallContext *ctx) {
-    string functionLabel = ctx->IDENTIFIER()->getText();
-    string out = "call ";
-    out.append(functionLabel + "\n");
-    return out;
-}
-
-antlrcpp::Any CompVisitor::visitMultiArgumentFunctionCall(IFCCParser::MultiArgumentFunctionCallContext *ctx) {
-    string functionLabel = ctx->IDENTIFIER()->getText();
-    string out = "";
-    //Mettre les arguments dans la stack de droite à gauche
-    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
-        const string value = ctx->CONST().at(i)->getText();
-        out.append("pushq $" + value + "\n");
-    }
-
-    //Appeller la fonction avec call
-    out.append(ASSM::INDENT + "call " + functionLabel + "\n");
-
-    //Nettoier les arguments
-    /*
-    std::stringstream stream;
-    stream << std::hex << ctx->CONST().size() * 4;
-    string cleanArgument = std::string(stream.str());
-     */
     return out;
 }
 
@@ -298,10 +216,70 @@ antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx)
     return visit(ctx->expr()).as<ASTNode *>();
 }
 
-antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivContext *ctx) {
+antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
+    string out;
+    string endIFTag;
+    string elseTag;
+
+    if (ctx->actionELSE != nullptr) {
+        elseTag = TagManager::generateTag();
+        endIFTag = TagManager::generateTag();
+    } else {
+        endIFTag = TagManager::generateTag();
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
+    }
+
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("je ").append(elseTag).append("\n");
+    }else{
+        out.append(ASSM::INDENT).append("je ").append(endIFTag).append("\n");
+    }
+
+    out.append(visit(ctx->actionIF).as<string>()).append("\n");
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("jmp ").append(endIFTag).append("\n");
+        out.append(elseTag).append(":").append("\n");
+        out.append(visit(ctx->actionELSE).as<string>()).append("\n");
+    }
+
+    out.append(endIFTag).append(":");
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitBlock(IFCCParser::BlockContext *ctx) {
+    string out;
+
+    for (int i = 0; i < ctx->statement().size(); i++) {
+        antlrcpp::Any action = visit(ctx->statement(i));
+        if (action.isNotNull()) {
+            out.append(action.as<std::string>() + "\n");
+        }
+    }
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitStatement(IFCCParser::StatementContext *ctx) {
+    return visit(ctx->children.at(0));
+}
+
+antlrcpp::Any CompVisitor::visitType(IFCCParser::TypeContext *ctx) {
+    return antlrcpp::Any();
+}
+
+antlrcpp::Any CompVisitor::visitOperationBinary(IFCCParser::OperationBinaryContext *ctx) {
     ASTExpr *node = new ASTExpr();
 
-    node->op = ctx->OP->getText();
+    node->op = ctx->op->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
     node->left->parent = (ASTNode *) node;
@@ -310,18 +288,48 @@ antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivCon
     return (ASTNode *) node;
 }
 
-antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) {
-    ASTExpr *node = new ASTExpr();
-
-    node->op = ctx->OP->getText();
-    node->left = visit(ctx->expr(0)).as<ASTNode *>();
-    node->right = visit(ctx->expr(1)).as<ASTNode *>();
-    node->left->parent = (ASTNode *) node;
-    node->right->parent = (ASTNode *) node;
-
-    return (ASTNode *) node;
+antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext *ctx) {
+    return antlrcpp::Any();
 }
 
-antlrcpp::Any CompVisitor::visitFunctionEvaluation(IFCCParser::FunctionEvaluationContext *ctx) {
-    return visit(ctx->functionCall());
+antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
+    string out;
+    string conditionTag = TagManager::generateTag();
+    string blockTag = TagManager::generateTag();
+
+    if(!ctx->isDoWhile){
+        out.append(ASSM::INDENT).append("jmp ").append(conditionTag).append("\n");
+    }
+    out.append(blockTag).append(":").append("\n");
+    out.append(visit(ctx->statement()).as<string>()).append("\n");
+
+    if(!ctx->isDoWhile) {
+        out.append(conditionTag).append(":").append("\n");
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
+    }
+
+    out.append(ASSM::INDENT).append("jne ").append(blockTag).append("\n");
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ctx) {
+    string functionLabel = ctx->functionLabel->getText();
+    string out = "";
+
+    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
+        const string value = ctx->CONST().at(i)->getText();
+        out.append("pushq $" + value + "\n");
+    }
+
+    out.append(ASSM::INDENT + "call " + functionLabel + "\n");
+
+    return out;
 }
