@@ -46,13 +46,43 @@ string ASSM::constRegister(string number) {
     return "$" + number;
 }
 
-string ASSM::operation(string regLeft, string op, string regRight) {
-    string keyword;
+string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
+    string out;
 
+    string keyword;
     if (op == "*") keyword = "imull ";
-    if (op == "/") keyword = "idivl ";
+    if (op == "/") keyword = "idiv ";
     if (op == "+") keyword = "addl ";
     if (op == "-") keyword = "subl ";
 
-    return string(keyword).append(regLeft).append(", ").append(regRight).append("\n");
+    if(op != "/") {
+        string regSource = regRight;
+        string regDest = regLeft;
+
+        if(regOut == regSource) {
+            regSource = regLeft;
+            regDest = regRight;
+        }
+
+        out = string(keyword).append(regSource).append(", ").append(regDest).append("\n");
+
+        if(regRight != regOut) {
+            out.append(ASSM::INDENT).append(registerToRegister(regDest, regOut)).append("\n");
+        }
+    } else {
+        if(regLeft != ASSM::REGISTER_A) {
+            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n").append(ASSM::INDENT)
+                .append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n").append(ASSM::INDENT);
+        }
+
+        out.append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT);
+        out.append(keyword).append(regRight).append("\n");
+
+        if(regOut != ASSM::REGISTER_A) {
+            out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, regOut)).append("\n");
+        }
+    }
+
+    return out;
 }
