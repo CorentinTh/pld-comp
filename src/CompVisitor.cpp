@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include "CompVisitor.h"
 #include "ASSM.h"
 #include "AST.h"
@@ -30,16 +31,49 @@ antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
-    // Prologue
-    string out = "main:\n";
+    //Create the label
+    string functionLabel = ctx->functionLabel->getText();
+    string out = ".text\n";
+    out.append(".global ").append(functionLabel + "\n");
+    out.append(functionLabel + ":\n");
+
+    //Insert scope to the stack
+    variableManager->pushScope(functionLabel);
+
+    //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
+    out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
+
+    if(ctx->IDENTIFIER().size() > 0) {
+        //Add params into variable Map
+        int paramOffset = 4;
+        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+            string prefix = variableManager->generatePrefix();
+            string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
+            string variableAddress = to_string(paramOffset);
+            variableManager->putVariableAtAddress(variableName, variableAddress);
+            paramOffset += 4;
+        }
+    }
 
     out.append(visit(ctx->block()).as<std::string>());
 
-    // Epilogue
+    //Remove scope
+    variableManager->popScope();
+
+    //Generate the Epilogue
+    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
+    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
+
+    int varAmount = variableManager->functionVariableAmount(functionLabel);
+    int stackSize = ( varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
+    int index;
+    while((index = out.find("{stackSize}")) != string::npos) {
+        out.replace(index, 11, "$" + to_string(stackSize));
+    }
 
     return out;
 }
@@ -53,7 +87,9 @@ antlrcpp::Any CompVisitor::visitAction(IFCCParser::ActionContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAffectationContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
 
     if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
@@ -70,14 +106,11 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
                 ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     } else if (expression->type == VALUE) {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
     } else {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
                 .append("\n")
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
@@ -86,7 +119,10 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
 
 antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
     // TODO: better expression parsing
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
+
 
     if (!variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is not defined");
@@ -98,18 +134,15 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 
     string out;
     if (expression->type == EXPR) {
-        out.append(expression->toASM()).append(ASSM::INDENT).append(
+        out.append(expression->toASM()).append(
                 ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     } else if (expression->type == VALUE) {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
     } else {
         out
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
                 .append("\n")
-                .append(ASSM::INDENT)
                 .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
     }
 
@@ -117,7 +150,9 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 }
 
 antlrcpp::Any CompVisitor::visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *ctx) {
-    const string variableName = ctx->IDENTIFIER()->getText();
+    const string prefix = variableManager->generatePrefix();
+    const string baseVariableName = ctx->IDENTIFIER()->getText();
+    const string variableName = prefix + baseVariableName;
 
     if (variableManager->variableExists(variableName)) {
         Logger::error("Variable " + variableName + " is already defined");
@@ -134,7 +169,9 @@ antlrcpp::Any CompVisitor::visitDeclarationMulti(IFCCParser::DeclarationMultiCon
     // Instructions
     for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
         if (ctx->IDENTIFIER(i) != nullptr) {
-            const string variableName = ctx->IDENTIFIER(i)->getText();
+            const string prefix = variableManager->generatePrefix();
+            const string baseVariableName = ctx->IDENTIFIER(i)->getText();
+            const string variableName = prefix + baseVariableName;
             if (variableManager->variableExists(variableName)) {
                 Logger::error("Variable " + variableName + " is already defined");
                 exit(EXIT_FAILURE);
@@ -153,7 +190,7 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     string out;
 
     if (expression->type != EXPR) {
-        out.append(ASSM::INDENT).append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_RETURN));
+        out.append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_RETURN));
     } else {
         out.append(expression->toASM()).append("\n");
     }
@@ -280,8 +317,19 @@ antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
     }
 
     out.append(ASSM::INDENT).append("jne ").append(blockTag).append("\n");
+    return out;
+}
 
+antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ctx) {
+    string functionLabel = ctx->functionLabel->getText();
+    string out = "";
 
+    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
+        const string value = ctx->CONST().at(i)->getText();
+        out.append("pushq $" + value + "\n");
+    }
+
+    out.append(ASSM::INDENT + "call " + functionLabel + "\n");
 
     return out;
 }

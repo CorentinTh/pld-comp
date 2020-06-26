@@ -96,11 +96,11 @@ string ASTValue::toASM() {
 
 string ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
-    string variableName = this->identifier;
-    if (!variableManager->variableExists(variableName)) {
-        Logger::error("Variable " + variableName + " is not defined");
-        exit(EXIT_FAILURE);
-    }
+    //TODO check existence with function identifier
+    string baseVariableName = this->identifier;
+    string prefix = variableManager->generatePrefix();
+    string variableName = prefix.append(baseVariableName);
+
     string variableAddress = variableManager->getAddress(variableName);
     return ASSM::addrRegister(variableAddress);
 }

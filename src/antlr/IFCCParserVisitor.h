@@ -49,6 +49,8 @@ public:
 
     virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) = 0;
 
+    virtual antlrcpp::Any visitFunctionCall(IFCCParser::FunctionCallContext *context) = 0;
+
     virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *context) = 0;
 
     virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;

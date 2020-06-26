@@ -1,20 +1,15 @@
 name: Should return SUCCESS for simple return
-command: ./cmake-build-debug/pld-comp {file1}
+command: ./cmake-build-debug/pld-comp {file1} > {asm.s} ; gcc {asm.s} -o {executable} ; {executable}
 assets:
-- type: file
-  name: file1
-  content: |-
-    int main() {
-      return 42;
-    }
+  - type: file
+    name: file1
+    content: |-
+      int main() {
+        return 42;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: executable
 expect:
-  status: 0
-  stdout: |-
-    .text
-    .global main
-    main:
-      pushq %rbp
-      movq %rsp, %rbp
-      movl $42, %eax
-      popq %rbp
-      ret
+  status: 42

@@ -75,6 +75,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitFunctionCall(IFCCParser::FunctionCallContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitIdentifier(IFCCParser::IdentifierContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -14,7 +14,7 @@ globalItem
     ;
 
 function
-    : type IDENTIFIER OPEN_PAR CLOSE_PAR block
+    : type functionLabel=IDENTIFIER OPEN_PAR (type IDENTIFIER (COMMA type IDENTIFIER)*)? CLOSE_PAR block
     ;
 
 instruction
@@ -24,6 +24,7 @@ instruction
 action
     : declaration
     | affectation
+    | functionCall
     | returnAct
     ;
 
@@ -63,6 +64,10 @@ whileStmt returns[bool isDoWhile]
 
 returnAct
     : RETURN expr
+    ;
+
+functionCall
+    : functionLabel=IDENTIFIER OPEN_PAR (CONST (COMMA CONST)*)? CLOSE_PAR
     ;
 
 expr
