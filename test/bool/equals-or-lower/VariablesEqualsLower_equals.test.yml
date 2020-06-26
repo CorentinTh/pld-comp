@@ -1,0 +1,17 @@
+name: (BOOL) Lower o Equals test between variables (43 <= 43)
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        int a = 43;
+        int b = 43;
+        return a <= b;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 1
