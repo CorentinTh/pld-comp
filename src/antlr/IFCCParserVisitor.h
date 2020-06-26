@@ -1,5 +1,5 @@
 
-// Generated from src/antlr/IFCC.g4 by ANTLR 4.7.2
+// Generated from src/antlr/IFCCParser.g4 by ANTLR 4.7.2
 
 #pragma once
 
@@ -13,7 +13,7 @@
  * This class defines an abstract visitor for a parse tree
  * produced by IFCCParser.
  */
-class  IFCCVisitor : public antlr4::tree::AbstractParseTreeVisitor {
+class  IFCCParserVisitor : public antlr4::tree::AbstractParseTreeVisitor {
 public:
 
   /**
@@ -21,11 +21,17 @@ public:
    */
     virtual antlrcpp::Any visitAxiom(IFCCParser::AxiomContext *context) = 0;
 
-    virtual antlrcpp::Any visitProg(IFCCParser::ProgContext *context) = 0;
+    virtual antlrcpp::Any visitGlobalItem(IFCCParser::GlobalItemContext *context) = 0;
+
+    virtual antlrcpp::Any visitFunction(IFCCParser::FunctionContext *context) = 0;
 
     virtual antlrcpp::Any visitInstruction(IFCCParser::InstructionContext *context) = 0;
 
     virtual antlrcpp::Any visitAction(IFCCParser::ActionContext *context) = 0;
+
+    virtual antlrcpp::Any visitStatement(IFCCParser::StatementContext *context) = 0;
+
+    virtual antlrcpp::Any visitBlock(IFCCParser::BlockContext *context) = 0;
 
     virtual antlrcpp::Any visitDeclarationEmpty(IFCCParser::DeclarationEmptyContext *context) = 0;
 
@@ -33,7 +39,13 @@ public:
 
     virtual antlrcpp::Any visitDeclarationMulti(IFCCParser::DeclarationMultiContext *context) = 0;
 
+    virtual antlrcpp::Any visitType(IFCCParser::TypeContext *context) = 0;
+
     virtual antlrcpp::Any visitAffectation(IFCCParser::AffectationContext *context) = 0;
+
+    virtual antlrcpp::Any visitIfStmt(IFCCParser::IfStmtContext *context) = 0;
+
+    virtual antlrcpp::Any visitWhileStmt(IFCCParser::WhileStmtContext *context) = 0;
 
     virtual antlrcpp::Any visitReturnAct(IFCCParser::ReturnActContext *context) = 0;
 
@@ -41,11 +53,11 @@ public:
 
     virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;
 
-    virtual antlrcpp::Any visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *context) = 0;
-
-    virtual antlrcpp::Any visitOperationMultDiv(IFCCParser::OperationMultDivContext *context) = 0;
+    virtual antlrcpp::Any visitOperationBinary(IFCCParser::OperationBinaryContext *context) = 0;
 
     virtual antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) = 0;
+
+    virtual antlrcpp::Any visitOperationUnary(IFCCParser::OperationUnaryContext *context) = 0;
 
 
 };

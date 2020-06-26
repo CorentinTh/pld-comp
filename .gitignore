@@ -9,3 +9,7 @@ cmake-build-debug/*
 
 # Project
 build/*
+
+# Debug files
+input.*
+a.out

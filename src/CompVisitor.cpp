@@ -4,6 +4,7 @@
 #include "AST.h"
 #include "Logger.h"
 #include "VariableManager.h"
+#include "TagManager.h"
 
 using namespace std;
 
@@ -12,23 +13,29 @@ VariableManager *variableManager = VariableManager::getInstance();
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
     string out = ".text\n";
     out.append(".global main\n");
-    out.append(visit(ctx->prog()).as<std::string>());
+
+    for (auto item :ctx->globalItem()) {
+        antlrcpp::Any result = visit(item);
+
+        if (result.isNotNull()) {
+            out.append(result.as<std::string>());
+        }
+    }
+
     return out;
 }
 
-antlrcpp::Any CompVisitor::visitProg(IFCCParser::ProgContext *ctx) {
+antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
+    return visit(ctx->children.at(0)).as<string>();
+}
+
+antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     // Prologue
     string out = "main:\n";
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
 
-    // Instructions
-    for (int i = 0; i < ctx->instruction().size(); i++) {
-        antlrcpp::Any visited = visit(ctx->instruction(i));
-        if (visited.isNotNull()) {
-            out.append(visited.as<std::string>() + "\n");
-        }
-    }
+    out.append(visit(ctx->block()).as<std::string>());
 
     // Epilogue
     out.append(ASSM::INDENT + "popq %rbp\n");
@@ -172,10 +179,70 @@ antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx)
     return visit(ctx->expr()).as<ASTNode *>();
 }
 
-antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivContext *ctx) {
+antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
+    string out;
+    string endIFTag;
+    string elseTag;
+
+    if (ctx->actionELSE != nullptr) {
+        elseTag = TagManager::generateTag();
+        endIFTag = TagManager::generateTag();
+    } else {
+        endIFTag = TagManager::generateTag();
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
+    }
+
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("je ").append(elseTag).append("\n");
+    }else{
+        out.append(ASSM::INDENT).append("je ").append(endIFTag).append("\n");
+    }
+
+    out.append(visit(ctx->actionIF).as<string>()).append("\n");
+    if (ctx->actionELSE != nullptr) {
+        out.append(ASSM::INDENT).append("jmp ").append(endIFTag).append("\n");
+        out.append(elseTag).append(":").append("\n");
+        out.append(visit(ctx->actionELSE).as<string>()).append("\n");
+    }
+
+    out.append(endIFTag).append(":");
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitBlock(IFCCParser::BlockContext *ctx) {
+    string out;
+
+    for (int i = 0; i < ctx->statement().size(); i++) {
+        antlrcpp::Any action = visit(ctx->statement(i));
+        if (action.isNotNull()) {
+            out.append(action.as<std::string>() + "\n");
+        }
+    }
+
+    return out;
+}
+
+antlrcpp::Any CompVisitor::visitStatement(IFCCParser::StatementContext *ctx) {
+    return visit(ctx->children.at(0));
+}
+
+antlrcpp::Any CompVisitor::visitType(IFCCParser::TypeContext *ctx) {
+    return antlrcpp::Any();
+}
+
+antlrcpp::Any CompVisitor::visitOperationBinary(IFCCParser::OperationBinaryContext *ctx) {
     ASTExpr *node = new ASTExpr();
 
-    node->op = ctx->OP->getText();
+    node->op = ctx->op->getText();
     node->left = visit(ctx->expr(0)).as<ASTNode *>();
     node->right = visit(ctx->expr(1)).as<ASTNode *>();
     node->left->parent = (ASTNode *) node;
@@ -184,14 +251,37 @@ antlrcpp::Any CompVisitor::visitOperationMultDiv(IFCCParser::OperationMultDivCon
     return (ASTNode *) node;
 }
 
-antlrcpp::Any CompVisitor::visitOperationPlusMinus(IFCCParser::OperationPlusMinusContext *ctx) {
-    ASTExpr *node = new ASTExpr();
+antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext *ctx) {
+    return antlrcpp::Any();
+}
 
-    node->op = ctx->OP->getText();
-    node->left = visit(ctx->expr(0)).as<ASTNode *>();
-    node->right = visit(ctx->expr(1)).as<ASTNode *>();
-    node->left->parent = (ASTNode *) node;
-    node->right->parent = (ASTNode *) node;
+antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
+    string out;
+    string conditionTag = TagManager::generateTag();
+    string blockTag = TagManager::generateTag();
 
-    return (ASTNode *) node;
+    if(!ctx->isDoWhile){
+        out.append(ASSM::INDENT).append("jmp ").append(conditionTag).append("\n");
+    }
+    out.append(blockTag).append(":").append("\n");
+    out.append(visit(ctx->statement()).as<string>()).append("\n");
+
+    if(!ctx->isDoWhile) {
+        out.append(conditionTag).append(":").append("\n");
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
+    }
+
+    out.append(ASSM::INDENT).append("jne ").append(blockTag).append("\n");
+
+
+
+    return out;
 }

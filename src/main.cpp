@@ -6,7 +6,7 @@
 #include "antlr4-runtime.h"
 #include "antlr/IFCCLexer.h"
 #include "antlr/IFCCParser.h"
-#include "antlr/IFCCBaseVisitor.h"
+#include "antlr/IFCCParserBaseVisitor.h"
 #include "CompVisitor.h"
 
 using namespace antlr4;

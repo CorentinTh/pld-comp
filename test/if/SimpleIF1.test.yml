@@ -1,0 +1,20 @@
+name: (IF) Conditionnal with variable value (=1) as bool
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        int a = 1;
+
+        if (a) a = 2;
+        else a = 3;
+
+        return a;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 2
