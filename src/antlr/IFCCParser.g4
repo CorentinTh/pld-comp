@@ -57,8 +57,8 @@ ifStmt
     ;
 
 whileStmt returns[bool isDoWhile]
-    : WHILE OPEN_PAR condition=expr CLOSE_PAR statement         {$isDoWhile = false;}
-    | DO statement OPEN_PAR condition=expr CLOSE_PAR SEMICOLON  {$isDoWhile = true;}
+    : WHILE OPEN_PAR condition=expr CLOSE_PAR statement               {$isDoWhile = false;}
+    | DO statement WHILE OPEN_PAR condition=expr CLOSE_PAR SEMICOLON  {$isDoWhile = true;}
     ;
 
 returnAct
@@ -81,10 +81,10 @@ expr
     | expr op=DAND expr       # operationBinary
     | expr op=OR   expr       # operationBinary
     | expr op=DOR  expr       # operationBinary
+    | OPEN_PAR expr CLOSE_PAR # parenthesis
     | op=MIN  expr            # operationUnary
     | CONST                   # const
     | IDENTIFIER              # identifier
-    | OPEN_PAR expr CLOSE_PAR # parenthesis
     ;
 
 

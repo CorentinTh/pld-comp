@@ -257,7 +257,30 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
 
 antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
     string out;
-    string conditionTag;
+    string conditionTag = TagManager::generateTag();
+    string blockTag = TagManager::generateTag();
+
+    if(!ctx->isDoWhile){
+        out.append(ASSM::INDENT).append("jmp ").append(conditionTag).append("\n");
+    }
+    out.append(blockTag).append(":").append("\n");
+    out.append(visit(ctx->statement()).as<string>()).append("\n");
+
+    if(!ctx->isDoWhile) {
+        out.append(conditionTag).append(":").append("\n");
+    }
+
+    ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
+
+    if (conditionAst->type != EXPR) {
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else {
+        out.append(conditionAst->toASM());
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
+    }
+
+    out.append(ASSM::INDENT).append("jne ").append(blockTag).append("\n");
+
 
 
     return out;
