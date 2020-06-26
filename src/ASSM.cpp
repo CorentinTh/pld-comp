@@ -56,10 +56,13 @@ string ASSM::constRegister(const string &number) {
 
 string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
     string out;
+
+    // If the operation is commutative we can optimize the destination of the operation
+    bool optimizable = op == "+" || op == "*" || op == "==" || op == "!=";
     string regSource = regRight;
     string regDest = regLeft;
 
-    if (regOut == regSource) {
+    if (optimizable && regOut == regSource) {
         regSource = regLeft;
         regDest = regRight;
     }
@@ -67,8 +70,7 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     if (op == "/") {
         if (regLeft != ASSM::REGISTER_A) {
             out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n")
-                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append(
-                            "\n")
+                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n")
                     .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n")
                     .append(ASSM::INDENT);
         }
@@ -91,7 +93,7 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     else if (op == "!=") out = ASSM::generateBooleanOperation("setne", regSource, regDest);
 
 
-    if (regRight != regOut && op != "/") {
+    if (!optimizable && regDest != regOut) {
         out.append(ASSM::INDENT).append(registerToRegister(regDest, regOut)).append("\n");
     }
 
