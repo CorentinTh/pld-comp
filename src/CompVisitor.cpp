@@ -44,6 +44,7 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
+    out.append(ASSM::INDENT + "subq 0x10, %rsp\n");
 
     // Instructions
     for (int i = 0; i < ctx->instruction().size(); i++) {
@@ -57,6 +58,7 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     variableManager->popScope();
 
     //Generate the Epilogue
+    out.append(ASSM::INDENT + "addq $0x10, %rsp\n");
     out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
@@ -78,6 +80,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
+    out.append(ASSM::INDENT + "subq 0x10, %rsp\n");
 
     int paramOffset = 4;
     //Add params into variable Map
@@ -106,6 +109,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     variableManager->popScope();
 
     //Generate the Epilogue
+    out.append(ASSM::INDENT + "addq $0x10, %rsp\n");
     out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
@@ -117,8 +121,6 @@ antlrcpp::Any CompVisitor::visitZeroArgumentFunctionCall(IFCCParser::ZeroArgumen
     string functionLabel = ctx->IDENTIFIER()->getText();
     string out = "call ";
     out.append(functionLabel + "\n");
-
-    //Pas de nettoiage des arguments puisqu'il n'y a pas d'arguments
     return out;
 }
 
@@ -135,10 +137,11 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunctionCall(IFCCParser::MultiArgum
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");
 
     //Nettoier les arguments
+    /*
     std::stringstream stream;
     stream << std::hex << ctx->CONST().size() * 4;
     string cleanArgument = std::string(stream.str());
-    out.append(ASSM::INDENT + "add $0x" + cleanArgument + ", %rsp");
+     */
     return out;
 }
 
