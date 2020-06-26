@@ -40,6 +40,8 @@ public:
     void popScope();
 
     string generatePrefix();
+
+    int functionVariableAmount(string functionName);
 };
 
 

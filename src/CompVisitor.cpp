@@ -44,7 +44,7 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
-    out.append(ASSM::INDENT + "subq $0x10, %rsp\n");
+    out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
 
     // Instructions
     for (int i = 0; i < ctx->instruction().size(); i++) {
@@ -58,10 +58,17 @@ antlrcpp::Any CompVisitor::visitZeroArgumentsFunction(IFCCParser::ZeroArgumentsF
     variableManager->popScope();
 
     //Generate the Epilogue
-    out.append(ASSM::INDENT + "addq $0x10, %rsp\n");
+    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
     out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
+
+    int varAmount = variableManager->functionVariableAmount(functionLabel);
+    int stackSize = ( varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
+    int index;
+    while((index = out.find("{stackSize}")) != string::npos) {
+        out.replace(index, 11, "$" + to_string(stackSize));
+    }
 
     return out;
 }
@@ -80,7 +87,7 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     //Generate the Prologue
     out.append(ASSM::INDENT + "pushq %rbp\n");
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
-    out.append(ASSM::INDENT + "subq $0x10, %rsp\n");
+    out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
 
     int paramOffset = 4;
     //Add params into variable Map
@@ -109,10 +116,18 @@ antlrcpp::Any CompVisitor::visitMultiArgumentFunction(IFCCParser::MultiArgumentF
     variableManager->popScope();
 
     //Generate the Epilogue
-    out.append(ASSM::INDENT + "addq $0x10, %rsp\n");
+    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
     out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
+
+    int varAmount = variableManager->functionVariableAmount(functionLabel);
+    int stackSize = ( varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
+    int index;
+    while((index = out.find("{stackSize}")) != string::npos) {
+        out.replace(index, 11, "$" + to_string(stackSize));
+    }
+
     return out;
 }
 

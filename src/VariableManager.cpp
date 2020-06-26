@@ -40,3 +40,15 @@ string VariableManager::generatePrefix() {
     }
     return prefix;
 }
+
+int VariableManager::functionVariableAmount(string functionName) {
+    int varAmount = 0;
+    map<string, string>::iterator it;
+    for(it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
+        if((*it).first.rfind(functionName, 0) == 0) {
+            varAmount++;
+        }
+    }
+
+    return varAmount;
+}
