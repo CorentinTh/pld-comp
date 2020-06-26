@@ -69,8 +69,8 @@ expr
     : expr op=MULT expr       # operationBinary
     | expr op=DIV  expr       # operationBinary
     | expr op=MOD  expr       # operationBinary
-    | expr op=PLUS expr       # operationBinary
     | expr op=MIN  expr       # operationBinary
+    | expr op=PLUS expr       # operationBinary
     | expr op=DEQ  expr       # operationBinary
     | expr op=NEQ  expr       # operationBinary
     | expr op=GT   expr       # operationBinary

@@ -318,8 +318,8 @@ public:
     antlr4::tree::TerminalNode *MULT();
     antlr4::tree::TerminalNode *DIV();
     antlr4::tree::TerminalNode *MOD();
-    antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *MIN();
+    antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *DEQ();
     antlr4::tree::TerminalNode *NEQ();
     antlr4::tree::TerminalNode *GT();
