@@ -10,13 +10,13 @@ using namespace antlr4;
 using namespace std;
 
 string helpMessage = "A compiler for a subset of the C language using C++ and Antlr4.\n"
-                           "Usage : {@} <inputFileName> <option> [<args>]\n"
-                           "Commandes\n"
-                           "\t-h, --help\n\t\tshow this message\n"
-                           "\t-o\n\t\tspecifie a file to write the output\n";
+                           "Usage : {@} <inputFileName> <option> [<args>]\n\n"
+                           "Commandes:\n"
+                           "\t-h, --help\tshow this message\n"
+                           "\t-o\t\tspecifie a file to write the output\n";
 
-const string noInputFile = "No input file";
-const string badInputFile = "Bad input file";
+const string noInputFile = "No input file.";
+const string badInputFile = "Bad input file.";
 
 class MyErrorListener : public BaseErrorListener {
 public:
