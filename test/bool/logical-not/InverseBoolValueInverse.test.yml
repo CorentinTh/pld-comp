@@ -1,0 +1,16 @@
+name: (BOOL) Inverse equality in variable (! 42 == 42)
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        int a = 42 == 42;
+        return !a;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 0
