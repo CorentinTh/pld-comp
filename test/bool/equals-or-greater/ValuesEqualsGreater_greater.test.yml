@@ -1,0 +1,15 @@
+name: (BOOL) Greater o Equals test between values (45 >= 43)
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+  - type: file
+    name: input.c
+    content: |-
+      int main() {
+        return 45 >= 43;
+      }
+  - type: file
+    name: asm.s
+  - type: file
+    name: exec
+expect:
+  status: 1
