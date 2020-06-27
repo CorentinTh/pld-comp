@@ -72,6 +72,14 @@ pair<string, string> ASTValue::toASM() {
     return out;
 }
 
+ASTFunction::ASTFunction() {
+    this->type = FUNCTION;
+}
+
+string ASTValue::toASM() {
+    return ASSM::constRegister(this->value);
+}
+
 pair<string, string> ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
     //TODO check existence with function identifier
@@ -85,4 +93,7 @@ pair<string, string> ASTIdentifier::toASM() {
     return out;
 }
 
+string ASTFunction::toASM() {
+    return this->assm;
+}
 

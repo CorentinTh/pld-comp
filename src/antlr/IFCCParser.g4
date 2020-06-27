@@ -67,7 +67,7 @@ returnAct
     ;
 
 functionCall
-    : functionLabel=IDENTIFIER OPEN_PAR (CONST (COMMA CONST)*)? CLOSE_PAR
+    : functionLabel=IDENTIFIER OPEN_PAR (expr (COMMA expr)*)? CLOSE_PAR
     ;
 
 
@@ -94,6 +94,7 @@ expr returns[bool isInfix]
     | op=L_NOT expr            {$isInfix = true;} # operationUnary
     | CONST                    # const
     | IDENTIFIER               # identifier
+    | functionCall            # functionCallExpr
     ;
 
 

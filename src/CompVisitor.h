@@ -42,4 +42,6 @@ class CompVisitor : public IFCCParserVisitor {
     antlrcpp::Any visitParenthesis(IFCCParser::ParenthesisContext *context) override;
 
     antlrcpp::Any visitOperationUnary(IFCCParser::OperationUnaryContext *context) override;
+
+    antlrcpp::Any visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *ctx) override;
 };

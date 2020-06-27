@@ -87,6 +87,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitOperationBinary(IFCCParser::OperationBinaryContext *ctx) override {
     return visitChildren(ctx);
   }
@@ -98,7 +102,5 @@ public:
   virtual antlrcpp::Any visitOperationUnary(IFCCParser::OperationUnaryContext *ctx) override {
     return visitChildren(ctx);
   }
-
-
 };
 

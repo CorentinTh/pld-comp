@@ -90,6 +90,15 @@ string ASSM::getRegisterL(const string &reg) {
     return "";
 }
 
+//TODO: delete this (as useless)
+string ASSM::registerToPushQ(const string &reg) {
+    return string(INDENT).append("pushq ").append(ASSM::REGISTER_A).append("\n");
+}
+
+string ASSM::asmToPushQ(const string &assm) {
+    return string(INDENT).append("pushq ").append(assm).append("\n");
+}
+
 //	cmpl	$1, -8(%rbp)
 //	sete	%al
 //	movzbl	%al, %eax

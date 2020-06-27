@@ -13,8 +13,7 @@ using namespace std;
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out;
-
+    string out = "";
     for (auto item :ctx->globalItem()) {
         antlrcpp::Any result = visit(item);
 
@@ -48,7 +47,7 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     if (ctx->IDENTIFIER().size() > 0) {
         //Add params into variable Map
         int paramOffset = 4;
-        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+        for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
             string prefix = variableManager->generatePrefix();
             string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
             string variableAddress = to_string(paramOffset);
@@ -184,10 +183,15 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     return out;
 }
 
-
 antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
     ASTIdentifier *node = new ASTIdentifier();
     node->identifier = ctx->IDENTIFIER()->getText();
+    return (ASTNode *) node;
+}
+
+antlrcpp::Any CompVisitor::visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *ctx) {
+    ASTFunction *node = new ASTFunction();
+    node->assm = visitFunctionCall(ctx->functionCall()).as<string>();
     return (ASTNode *) node;
 }
 
@@ -336,9 +340,16 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
     string functionLabel = ctx->functionLabel->getText();
     string out = "";
 
-    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
-        const string value = ctx->CONST().at(i)->getText();
-        out.append("pushq $" + value + "\n");
+    for (int i = ctx->expr().size() - 1; i >= 0; i--) {
+        auto tree = ctx->expr().at(i);
+        ASTNode *expression = visit(tree).as<ASTNode *>();
+
+        if (expression->type == EXPR) {
+            //TODO: fix this
+            out.append(expression->toASM()).append(ASSM::registerToPushQ(ASSM::REGISTER_A));
+        } else {
+            out.append(ASSM::asmToPushQ(expression->toASM()));
+        }
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");

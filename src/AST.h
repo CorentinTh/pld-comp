@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <antlr/IFCCParser.h>
 
 using namespace std;
 
@@ -26,7 +27,8 @@ struct AST;
 enum NodeType {
     VALUE,
     EXPR,
-    IDENTIFIER
+    IDENTIFIER,
+    FUNCTION
 };
 
 class ASTNode {
@@ -69,6 +71,15 @@ public :
     string identifier;
 
     pair<string, string> toASM() override;
+};
+
+class ASTFunction : ASTNode {
+public:
+    ASTFunction();
+
+    string assm;
+
+    string toASM() override;
 };
 
 #endif //PLD_COMP_AST_H

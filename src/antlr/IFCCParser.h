@@ -337,6 +337,14 @@ public:
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
+  class  FunctionCallExprContext : public ExprContext {
+  public:
+    FunctionCallExprContext(ExprContext *ctx);
+
+    FunctionCallContext *functionCall();
+    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
+  };
+
   class  OperationBinaryContext : public ExprContext {
   public:
     OperationBinaryContext(ExprContext *ctx);

@@ -1,0 +1,20 @@
+name: (FUNCTION) Single argument call with const
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+- type: file
+  name: input.c
+  content: |-
+    int addOne(int a) {
+      return a + 1;
+    }
+
+    int main() {
+      int a = addOne(10);
+      return a;
+    }
+- type: file
+  name: asm.s
+- type: file
+  name: exec
+expect:
+  status: 11
