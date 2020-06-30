@@ -358,3 +358,9 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
 
     return out;
 }
+
+antlrcpp::Any CompVisitor::visitCharLiteral(IFCCParser::CharLiteralContext *ctx) {
+    ASTValue *node = new ASTValue();
+    node->value = to_string(ctx->CHAR_LIT()->toString().at(1));
+    return (ASTNode *) node;
+}

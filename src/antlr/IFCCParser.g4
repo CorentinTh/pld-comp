@@ -96,6 +96,7 @@ expr returns[bool isInfix]
     | op=B_NOT expr            {$isInfix = true;} # operationUnary
     | CONST                    # const
     | IDENTIFIER               # identifier
+    | CHAR_LIT                 # charLiteral
     ;
 
 
