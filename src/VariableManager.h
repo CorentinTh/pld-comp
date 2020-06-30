@@ -42,6 +42,8 @@ public:
     string generatePrefix();
 
     int functionVariableAmount(string functionName);
+
+    void removeVariable(const string &identifier);
 };
 
 
