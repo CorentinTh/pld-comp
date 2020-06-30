@@ -230,8 +230,12 @@ antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
 
     ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
 
-    if (conditionAst->type != EXPR) {
+    if (conditionAst->type == IDENTIFIER) {
         out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    } else if (conditionAst->type == VALUE) {
+        string tmpVariable = ASSM::addrRegister(variableManager->getNextAddress());
+        out.append(ASSM::INDENT).append(ASSM::registerToRegister(conditionAst->toASM(), tmpVariable)).append("\n");
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(tmpVariable).append("\n");
     } else {
         out.append(conditionAst->toASM());
         out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
@@ -309,8 +313,12 @@ antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
 
     ASTNode *conditionAst = visit(ctx->condition).as<ASTNode *>();
 
-    if (conditionAst->type != EXPR) {
+    if (conditionAst->type == IDENTIFIER) {
         out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
+    }  else if (conditionAst->type == VALUE) {
+        string tmpVariable = ASSM::addrRegister(variableManager->getNextAddress());
+        out.append(ASSM::INDENT).append(ASSM::registerToRegister(conditionAst->toASM(), tmpVariable)).append("\n");
+        out.append(ASSM::INDENT).append("cmpl $0, ").append(tmpVariable).append("\n");
     } else {
         out.append(conditionAst->toASM());
         out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
