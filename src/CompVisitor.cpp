@@ -47,7 +47,7 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     if (ctx->IDENTIFIER().size() > 0) {
         //Add params into variable Map
         int paramOffset = 4;
-        for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
+        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
             string prefix = variableManager->generatePrefix();
             string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
             string variableAddress = to_string(paramOffset);
