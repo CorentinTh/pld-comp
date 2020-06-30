@@ -58,7 +58,7 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     string out;
 
     // If the operation is commutative we can optimize the destination of the operation
-    bool optimizable = op == "+" || op == "*" || op == "==" || op == "!=" || op == "&" || op == "|";
+    bool optimizable = op == "+" || op == "*" || op == "==" || op == "!=" || op == "&" || op == "|" || op == "^";
     string regSource = regRight;
     string regDest = regLeft;
 
@@ -87,6 +87,7 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     else if (op == "-") out = string("subl ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == "|") out = string("orl ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == "&") out = string("andl ").append(regSource).append(", ").append(regDest).append("\n");
+    else if (op == "^") out = string("xorl ").append(regSource).append(", ").append(regDest).append("\n");
     else if (op == ">") out = ASSM::generateBooleanOperation("setg", regSource, regDest);
     else if (op == "<") out = ASSM::generateBooleanOperation("setl", regSource, regDest);
     else if (op == ">=") out = ASSM::generateBooleanOperation("setge", regSource, regDest);

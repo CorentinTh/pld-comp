@@ -15,11 +15,11 @@ public:
     IF = 1, ELSE = 2, WHILE = 3, DO = 4, RETURN = 5, OPEN_PAR = 6, CLOSE_PAR = 7, 
     OPEN_BRACE = 8, CLOSE_BRACE = 9, OPEN_BRACKET = 10, CLOSE_BRACKET = 11, 
     SEMICOLON = 12, COMMA = 13, INT = 14, CHAR = 15, MULT = 16, DIV = 17, 
-    PLUS = 18, MIN = 19, MOD = 20, EQ = 21, L_NOT = 22, NEQ = 23, DEQ = 24, 
-    GT = 25, LT = 26, GE = 27, LE = 28, B_AND = 29, L_AND = 30, B_OR = 31, 
-    L_OR = 32, DPLUS = 33, DMIN = 34, MULT_EQ = 35, DIV_EQ = 36, PLUS_EQ = 37, 
-    MIN_EQ = 38, CONST = 39, IDENTIFIER = 40, OPERATOR = 41, COMMENT = 42, 
-    DIRECTIVE = 43, WS = 44
+    PLUS = 18, MIN = 19, MOD = 20, EQ = 21, L_NOT = 22, B_NOT = 23, NEQ = 24, 
+    DEQ = 25, GT = 26, LT = 27, GE = 28, LE = 29, B_AND = 30, L_AND = 31, 
+    B_OR = 32, L_OR = 33, X_OR = 34, DPLUS = 35, DMIN = 36, MULT_EQ = 37, 
+    DIV_EQ = 38, PLUS_EQ = 39, MIN_EQ = 40, CONST = 41, IDENTIFIER = 42, 
+    OPERATOR = 43, COMMENT = 44, DIRECTIVE = 45, WS = 46
   };
 
   enum {
@@ -359,6 +359,7 @@ public:
     antlr4::tree::TerminalNode *L_AND();
     antlr4::tree::TerminalNode *B_OR();
     antlr4::tree::TerminalNode *L_OR();
+    antlr4::tree::TerminalNode *X_OR();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
@@ -381,6 +382,7 @@ public:
     antlr4::tree::TerminalNode *MIN();
     antlr4::tree::TerminalNode *PLUS();
     antlr4::tree::TerminalNode *L_NOT();
+    antlr4::tree::TerminalNode *B_NOT();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
