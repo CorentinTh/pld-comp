@@ -64,20 +64,16 @@ ASTIdentifier::ASTIdentifier() {
     this->type = IDENTIFIER;
 }
 
+ASTFunction::ASTFunction() {
+    this->type = FUNCTION;
+}
+
 pair<string, string> ASTValue::toASM() {
     string tmpVariable = TmpVariable::getVariable();
     string result = string(ASSM::INDENT).append(ASSM::constToRegister(this->value, tmpVariable).append("\n"));
     pair<string, string> out(tmpVariable, result);
 
     return out;
-}
-
-ASTFunction::ASTFunction() {
-    this->type = FUNCTION;
-}
-
-string ASTValue::toASM() {
-    return ASSM::constRegister(this->value);
 }
 
 pair<string, string> ASTIdentifier::toASM() {
@@ -93,7 +89,12 @@ pair<string, string> ASTIdentifier::toASM() {
     return out;
 }
 
-string ASTFunction::toASM() {
-    return this->assm;
-}
+pair<string, string> ASTFunction::toASM() {
+    string tmpVariable = TmpVariable::getVariable();
+    string result = this->assm;
+    string resultAddress = string(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_RETURN, tmpVariable).append("\n"));
+    result.append(resultAddress);
 
+    pair<tmpVariable, result> out("", "\r");
+    return out;
+}

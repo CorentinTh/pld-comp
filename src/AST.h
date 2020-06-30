@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <vector>
 #include <antlr/IFCCParser.h>
 
 using namespace std;
@@ -73,13 +74,14 @@ public :
     pair<string, string> toASM() override;
 };
 
+
 class ASTFunction : ASTNode {
 public:
     ASTFunction();
 
     string assm;
 
-    string toASM() override;
+    pair<string, string> toASM() override;
 };
 
 #endif //PLD_COMP_AST_H

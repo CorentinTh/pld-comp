@@ -18,8 +18,8 @@ public:
     PLUS = 18, MIN = 19, MOD = 20, EQ = 21, L_NOT = 22, NEQ = 23, DEQ = 24, 
     GT = 25, LT = 26, GE = 27, LE = 28, B_AND = 29, L_AND = 30, B_OR = 31, 
     L_OR = 32, DPLUS = 33, DMIN = 34, MULT_EQ = 35, DIV_EQ = 36, PLUS_EQ = 37, 
-    MIN_EQ = 38, CONST = 39, IDENTIFIER = 40, OPERATOR = 41, COMMENT = 42, 
-    DIRECTIVE = 43, WS = 44
+    MIN_EQ = 38, CONST = 39, IDENTIFIER = 40, OPERATOR = 41, COMMENT_BLOCK = 42, 
+    COMMENT_LINE = 43, DIRECTIVE = 44, WS = 45
   };
 
   enum {
@@ -296,8 +296,8 @@ public:
     antlr4::tree::TerminalNode *OPEN_PAR();
     antlr4::tree::TerminalNode *CLOSE_PAR();
     antlr4::tree::TerminalNode *IDENTIFIER();
-    std::vector<antlr4::tree::TerminalNode *> CONST();
-    antlr4::tree::TerminalNode* CONST(size_t i);
+    std::vector<ExprContext *> expr();
+    ExprContext* expr(size_t i);
     std::vector<antlr4::tree::TerminalNode *> COMMA();
     antlr4::tree::TerminalNode* COMMA(size_t i);
 

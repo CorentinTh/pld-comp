@@ -346,9 +346,9 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
 
         if (expression->type == EXPR) {
             //TODO: fix this
-            out.append(expression->toASM()).append(ASSM::registerToPushQ(ASSM::REGISTER_A));
+            out.append(expression->toASM().second).append(ASSM::registerToPushQ(ASSM::REGISTER_A));
         } else {
-            out.append(ASSM::asmToPushQ(expression->toASM()));
+            out.append(ASSM::asmToPushQ(expression->toASM().second));
         }
     }
 
