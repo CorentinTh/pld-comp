@@ -96,8 +96,6 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
         Logger::error("Variable " + variableName + " is already defined");
         exit(EXIT_FAILURE);
     }
-//    const string variableAddress = variableManager->getNextAddress();
-//    variableManager->putVariableAtAddress(variableName, variableAddress);
 
     ASTNode *expression = visit(ctx->expr()).as<ASTNode *>();
     string out;
@@ -109,19 +107,6 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     TmpVariable::free(address);
     string cleanAddr = address.substr(1, address.size() - 7);
     variableManager->putVariableAtAddress(variableName, cleanAddr);
-
-//    if (expression->type == EXPR) {
-//        out.append(expression->toASM()).append(ASSM::INDENT).append(
-//                ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-//    } else if (expression->type == VALUE) {
-//        out
-//                .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
-//    } else {
-//        out
-//                .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
-//                .append("\n")
-//                .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-//    }
 
     return out;
 }
@@ -149,19 +134,6 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
 
     out.append(ASSM::registerToRegister(expPair.first, ASSM::REGISTER_A)).append("\n");
     out.append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-
-//    if (expression->type == EXPR) {
-//        out.append(expression->toASM()).append(
-//                ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-//    } else if (expression->type == VALUE) {
-//        out
-//                .append(ASSM::registerToAddr(expression->toASM(), variableAddress));
-//    } else {
-//        out
-//                .append(ASSM::registerToRegister(expression->toASM(), ASSM::REGISTER_A))
-//                .append("\n")
-//                .append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
-//    }
 
     return out;
 }
@@ -249,18 +221,6 @@ antlrcpp::Any CompVisitor::visitIfStmt(IFCCParser::IfStmtContext *ctx) {
     out.append(expPair.second);
     out.append(ASSM::INDENT).append("cmpl $0, ").append(expPair.first).append("\n");
 
-//
-//    if (conditionAst->type == IDENTIFIER) {
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
-//    } else if (conditionAst->type == VALUE) {
-//        string tmpVariable = ASSM::addrRegister(variableManager->getNextAddress());
-//        out.append(ASSM::INDENT).append(ASSM::registerToRegister(conditionAst->toASM(), tmpVariable)).append("\n");
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(tmpVariable).append("\n");
-//    } else {
-//        out.append(conditionAst->toASM());
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
-//    }
-
     if (ctx->actionELSE != nullptr) {
         out.append(ASSM::INDENT).append("je ").append(elseTag).append("\n");
     } else {
@@ -335,17 +295,6 @@ antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {
     pair<string, string> expPair = expression->toASM();
     out.append(expPair.second);
     out.append(ASSM::INDENT).append("cmpl $0, ").append(expPair.first).append("\n");
-
-//    if (conditionAst->type == IDENTIFIER) {
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(conditionAst->toASM()).append("\n");
-//    } else if (conditionAst->type == VALUE) {
-//        string tmpVariable = ASSM::addrRegister(variableManager->getNextAddress());
-//        out.append(ASSM::INDENT).append(ASSM::registerToRegister(conditionAst->toASM(), tmpVariable)).append("\n");
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(tmpVariable).append("\n");
-//    } else {
-//        out.append(conditionAst->toASM());
-//        out.append(ASSM::INDENT).append("cmpl $0, ").append(ASSM::REGISTER_A).append("\n");
-//    }
 
     out.append(ASSM::INDENT).append("jne ").append(blockTag).append("\n");
     return out;

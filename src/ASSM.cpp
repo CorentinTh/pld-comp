@@ -56,7 +56,6 @@ string ASSM::constRegister(const string &number) {
 }
 
 string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
-    VariableManager *variableManager = VariableManager::getInstance();
     string writableLeftReg = ASSM::REGISTER_D;
     string out = string(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
 
@@ -81,10 +80,6 @@ string ASSM::generateBooleanOperation(const string &keyword, const string &regLe
             .append(INDENT).append(keyword).append(" ").append(lRegRight).append("\n")
             .append(INDENT).append("movzbl ").append(lRegRight).append(", ").append(regRight).append("\n");
 }
-
-//string ASSM::operation(const string &op, const string &reg) {
-//    return std::string(op).append(reg);
-//}
 
 string ASSM::getRegisterL(const string &reg) {
     if (reg == REGISTER_A) return REGISTER_A_L;
