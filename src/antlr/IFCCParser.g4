@@ -88,10 +88,12 @@ expr returns[bool isInfix]
     | expr op=L_AND expr       # operationBinary
     | expr op=B_OR  expr       # operationBinary
     | expr op=L_OR  expr       # operationBinary
+    | expr op=X_OR  expr       # operationBinary
     | OPEN_PAR expr CLOSE_PAR  # parenthesis
     | op=MIN   expr            {$isInfix = true;} # operationUnary
     | op=PLUS  expr            {$isInfix = true;} # operationUnary
     | op=L_NOT expr            {$isInfix = true;} # operationUnary
+    | op=B_NOT expr            {$isInfix = true;} # operationUnary
     | CONST                    # const
     | IDENTIFIER               # identifier
     | functionCall            # functionCallExpr

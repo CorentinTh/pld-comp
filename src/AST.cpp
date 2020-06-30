@@ -95,6 +95,6 @@ pair<string, string> ASTFunction::toASM() {
     string resultAddress = string(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_RETURN, tmpVariable).append("\n"));
     result.append(resultAddress);
 
-    pair<tmpVariable, result> out("", "\r");
+    pair<string, string> out(tmpVariable, result);
     return out;
 }

@@ -102,7 +102,7 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     out.append(expPair.second);
     string address = expPair.first;
 
-    TmpVariable::free(address);
+//    TmpVariable::free(address);
     string cleanAddr = address.substr(1, address.size() - 7);
     variableManager->putVariableAtAddress(variableName, cleanAddr);
 
@@ -301,6 +301,19 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
 
         expr->left = (ASTNode *) left;
         expr->op = "==";
+        expr->right = visit(ctx->expr()).as<ASTNode *>();
+
+        expr->left->parent = node;
+        expr->right->parent = node;
+
+        node = (ASTNode*) expr;
+    }else if(op == "~"){
+        ASTExpr *expr = new ASTExpr();
+        ASTValue *left = new ASTValue();
+        left->value = "-1";
+
+        expr->left = (ASTNode *) left;
+        expr->op = "^";
         expr->right = visit(ctx->expr()).as<ASTNode *>();
 
         expr->left->parent = node;
