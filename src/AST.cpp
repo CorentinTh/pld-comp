@@ -3,6 +3,7 @@
 #include "ASSM.h"
 #include "Logger.h"
 #include "VariableManager.h"
+#include "TmpVariable.h"
 
 // tmp1 = 2*2
 // tmp2 = tmp1-8
@@ -22,60 +23,39 @@
 // Finally, we handle the current node
 
 // TODO: simplify this by pushing the specific logic of ASTValue and ASTIdentifier dedicated toAST method (use a new "regOut" argument)
-string ASTExpr::toASM() {
+pair<string, string> ASTExpr::toASM() {
     string result;
+    string tmpVariable = TmpVariable::getVariable();
 
-    // All left nodes browsing
-    if (this->left != nullptr) {
-        if (this->left->type != EXPR) {
-            result.append(ASSM::INDENT)
-                .append(ASSM::registerToRegister(this->left->toASM(), ASSM::REGISTER_A))
-                .append("\n");
-        } else {
-            result.append(this->left->toASM());
-        }
+    if (this->type == EXPR) {
+        pair<string, string> leftPair = this->left->toASM();
+        pair<string, string> rightPair = this->right->toASM();
+        string leftVar = leftPair.first;
+        string leftASM = leftPair.second;
+        string rightVar = rightPair.first;
+        string rightASM = rightPair.second;
 
-        // If the right member is an expression we need to stash the register A to avoid it be deleted by the
-        // expression calculation
-        if(this->right->type == EXPR) {
-            result.append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_C))
-                    .append("\n");
-        }
+        result.append(leftASM);
+        result.append(rightASM);
+
+        result.append(ASSM::operation(leftVar, this->op, rightVar, tmpVariable)).append("\n");
+
+        TmpVariable::free(leftVar);
+        TmpVariable::free(rightVar);
+    } else {
+        tmpVariable = this->toASM().first;
     }
 
-    // All right nodes browsing
-    if (this->right != nullptr) {
-        if (this->right->type != EXPR) {
-            result.append(ASSM::INDENT)
-                .append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B))
-                .append("\n");
-        } else {
-            result.append(this->right->toASM());
 
-            // As the right member is an expression, the register A as been deleted by the expression calculation
-            // We need to restore it's value to the previously stashed value present in register C
-            result.append(ASSM::INDENT)
-                    .append(ASSM::registerToRegister(ASSM::REGISTER_C, ASSM::REGISTER_A))
-                    .append("\n");
-        }
-    }
+//    if(this->type == EXPR){
+//        result.append(ASSM::operation(ASSM::REGISTER_A, this->op, ASSM::REGISTER_B, ASSM::REGISTER_C)).append("\n");
+//        result.append(ASSM::registerToRegister(ASSM::REGISTER_C, ASSM::REGISTER_B)).append("\n");
+//    }else{
+//        result.append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B)).append("\n");
+//    }
+    pair<string, string> out(tmpVariable, result);
 
-    // Handle current node
-    bool isRootNode = this->parent == nullptr;
-    bool isLeftExpr = false;
-
-    if (!isRootNode) {
-        ASTExpr *parentExpr = (ASTExpr *) this->parent;
-        isLeftExpr = parentExpr->left == this;
-    }
-
-    // If we are a left expression from our parent, put the result in register A
-    // If we are a right expression from our parent, put the result in register B
-    string outputReg = isRootNode || isLeftExpr ? ASSM::REGISTER_A : ASSM::REGISTER_B;
-    result.append(ASSM::INDENT).append(ASSM::operation(ASSM::REGISTER_A, this->op, ASSM::REGISTER_B, outputReg));
-
-    return result;
+    return out;
 }
 
 ASTExpr::ASTExpr() {
@@ -90,19 +70,25 @@ ASTIdentifier::ASTIdentifier() {
     this->type = IDENTIFIER;
 }
 
-string ASTValue::toASM() {
-    return ASSM::constRegister(this->value);
+pair<string, string> ASTValue::toASM() {
+    string tmpVariable = TmpVariable::getVariable();
+    string result = ASSM::constToRegister(this->value, tmpVariable).append("\n");
+    pair<string, string> out(tmpVariable, result);
+
+    return out;
 }
 
-string ASTIdentifier::toASM() {
+pair<string, string> ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
     //TODO check existence with function identifier
     string baseVariableName = this->identifier;
     string prefix = variableManager->generatePrefix();
     string variableName = prefix.append(baseVariableName);
 
-    string variableAddress = variableManager->getAddress(variableName);
-    return ASSM::addrRegister(variableAddress);
+    string variableAddress = ASSM::addrRegister(variableManager->getAddress(variableName));
+
+    pair<string, string> out(variableAddress, "");
+    return out;
 }
 
 

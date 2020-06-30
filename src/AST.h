@@ -38,7 +38,7 @@ public:
     NodeType type = static_cast<NodeType>(-1);
     ASTNode *parent;
 
-    virtual string toASM() = 0;
+    virtual pair<string, string> toASM() = 0;
 };
 
 class ASTExpr : ASTNode {
@@ -49,7 +49,7 @@ public :
     ASTNode *right{};
     string op;
 
-    string toASM() override;
+    pair<string, string> toASM() override;
 };
 
 class ASTValue : ASTNode {
@@ -58,7 +58,7 @@ public :
 
     string value;
 
-    string toASM() override;
+    pair<string, string> toASM() override;
 };
 
 class ASTIdentifier : ASTNode {
@@ -68,7 +68,7 @@ public :
 
     string identifier;
 
-    string toASM() override;
+    pair<string, string> toASM() override;
 };
 
 #endif //PLD_COMP_AST_H

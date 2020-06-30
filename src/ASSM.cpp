@@ -3,6 +3,7 @@
 //
 
 #include "ASSM.h"
+#include "VariableManager.h"
 
 const string ASSM::BASE_POINTER = "%rbp";
 const string ASSM::REGISTER_A = "%eax";
@@ -55,47 +56,21 @@ string ASSM::constRegister(const string &number) {
 }
 
 string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
-    string out;
+    VariableManager *variableManager = VariableManager::getInstance();
+    string writableLeftReg = ASSM::REGISTER_D;
+    string out = string(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
 
-    // If the operation is commutative we can optimize the destination of the operation
-    bool optimizable = op == "+" || op == "*" || op == "==" || op == "!=";
-    string regSource = regRight;
-    string regDest = regLeft;
+    if (op == "*")  out.append("imull ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "+") out.append(string("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
+    else if (op == "-") out.append(string("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
+    else if (op == ">") out.append(ASSM::generateBooleanOperation("setg", regRight, writableLeftReg));
+    else if (op == "<") out.append(ASSM::generateBooleanOperation("setl", regRight, writableLeftReg));
+    else if (op == ">=") out.append(ASSM::generateBooleanOperation("setge", regRight, writableLeftReg));
+    else if (op == "<=") out.append(ASSM::generateBooleanOperation("setle", regRight, writableLeftReg));
+    else if (op == "==") out.append(ASSM::generateBooleanOperation("sete", regRight, writableLeftReg));
+    else if (op == "!=") out.append(ASSM::generateBooleanOperation("setne", regRight, writableLeftReg));
 
-    if (optimizable && regOut == regSource) {
-        regSource = regLeft;
-        regDest = regRight;
-    }
-
-    if (op == "/") {
-        if (regLeft != ASSM::REGISTER_A) {
-            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n")
-                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n")
-                    .append(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n")
-                    .append(ASSM::INDENT);
-        }
-
-        out.append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT);
-        out.append("idiv ").append(regRight).append("\n");
-
-        if (regOut != ASSM::REGISTER_A) {
-            out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, regOut)).append("\n");
-        }
-    }
-    else if (op == "*") out = string("imull ").append(regSource).append(", ").append(regDest).append("\n");
-    else if (op == "+") out = string("addl ").append(regSource).append(", ").append(regDest).append("\n");
-    else if (op == "-") out = string("subl ").append(regSource).append(", ").append(regDest).append("\n");
-    else if (op == ">") out = ASSM::generateBooleanOperation("setg", regSource, regDest);
-    else if (op == "<") out = ASSM::generateBooleanOperation("setl", regSource, regDest);
-    else if (op == ">=") out = ASSM::generateBooleanOperation("setge", regSource, regDest);
-    else if (op == "<=") out = ASSM::generateBooleanOperation("setle", regSource, regDest);
-    else if (op == "==") out = ASSM::generateBooleanOperation("sete", regSource, regDest);
-    else if (op == "!=") out = ASSM::generateBooleanOperation("setne", regSource, regDest);
-
-
-    if (!optimizable && regDest != regOut) {
-        out.append(ASSM::INDENT).append(registerToRegister(regDest, regOut)).append("\n");
-    }
+    out.append(ASSM::registerToRegister(writableLeftReg, regOut)).append("\n");
 
     return out;
 }

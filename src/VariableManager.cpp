@@ -52,3 +52,7 @@ int VariableManager::functionVariableAmount(string functionName) {
 
     return varAmount;
 }
+
+void VariableManager::removeVariable(const string& identifier) {
+    this->variableAddressMap.erase(identifier);
+}
