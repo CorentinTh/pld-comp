@@ -19,7 +19,7 @@ const string ASSM::REGISTER_D = "%edx";
 const string ASSM::REGISTER_D_L = "%dl";
 const string ASSM::REGISTER_D_H = "%dh";
 const string ASSM::REGISTER_RETURN = ASSM::REGISTER_A;
-const string ASSM::INDENT = "  ";
+const string ASSM::INDENT = "\t";
 
 // Put into register
 
@@ -57,11 +57,11 @@ string ASSM::constRegister(const string &number) {
 
 string ASSM::operation(string regLeft, string op, string regRight, string regOut) {
     string writableLeftReg = ASSM::REGISTER_D;
-    string out = string(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
+    string out = string(ASSM::INDENT).append(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
 
-    if (op == "*")  out.append("imull ").append(regRight).append(", ").append(writableLeftReg).append("\n");
-    else if (op == "+") out.append(string("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
-    else if (op == "-") out.append(string("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
+    if (op == "*")  out.append(ASSM::INDENT).append("imull ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "+") out.append(ASSM::INDENT).append(string("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
+    else if (op == "-") out.append(ASSM::INDENT).append(string("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
     else if (op == ">") out.append(ASSM::generateBooleanOperation("setg", regRight, writableLeftReg));
     else if (op == "<") out.append(ASSM::generateBooleanOperation("setl", regRight, writableLeftReg));
     else if (op == ">=") out.append(ASSM::generateBooleanOperation("setge", regRight, writableLeftReg));
@@ -69,7 +69,7 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     else if (op == "==") out.append(ASSM::generateBooleanOperation("sete", regRight, writableLeftReg));
     else if (op == "!=") out.append(ASSM::generateBooleanOperation("setne", regRight, writableLeftReg));
 
-    out.append(ASSM::registerToRegister(writableLeftReg, regOut)).append("\n");
+    out.append(ASSM::INDENT).append(ASSM::registerToRegister(writableLeftReg, regOut)).append("\n");
 
     return out;
 }

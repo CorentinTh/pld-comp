@@ -38,21 +38,15 @@ pair<string, string> ASTExpr::toASM() {
         result.append(leftASM);
         result.append(rightASM);
 
-        result.append(ASSM::operation(leftVar, this->op, rightVar, tmpVariable)).append("\n");
+        result.append(ASSM::operation(leftVar, this->op, rightVar, tmpVariable));
 
-        TmpVariable::free(leftVar);
-        TmpVariable::free(rightVar);
+//        Pas si simple de supprimer la variable tmp...
+//        TmpVariable::free(leftVar);
+//        TmpVariable::free(rightVar);
     } else {
         tmpVariable = this->toASM().first;
     }
 
-
-//    if(this->type == EXPR){
-//        result.append(ASSM::operation(ASSM::REGISTER_A, this->op, ASSM::REGISTER_B, ASSM::REGISTER_C)).append("\n");
-//        result.append(ASSM::registerToRegister(ASSM::REGISTER_C, ASSM::REGISTER_B)).append("\n");
-//    }else{
-//        result.append(ASSM::registerToRegister(this->right->toASM(), ASSM::REGISTER_B)).append("\n");
-//    }
     pair<string, string> out(tmpVariable, result);
 
     return out;
@@ -72,7 +66,7 @@ ASTIdentifier::ASTIdentifier() {
 
 pair<string, string> ASTValue::toASM() {
     string tmpVariable = TmpVariable::getVariable();
-    string result = ASSM::constToRegister(this->value, tmpVariable).append("\n");
+    string result = string(ASSM::INDENT).append(ASSM::constToRegister(this->value, tmpVariable).append("\n"));
     pair<string, string> out(tmpVariable, result);
 
     return out;
@@ -87,7 +81,7 @@ pair<string, string> ASTIdentifier::toASM() {
 
     string variableAddress = ASSM::addrRegister(variableManager->getAddress(variableName));
 
-    pair<string, string> out(variableAddress, "");
+    pair<string, string> out(variableAddress, "\r");
     return out;
 }
 

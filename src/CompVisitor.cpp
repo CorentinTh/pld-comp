@@ -13,8 +13,7 @@ using namespace std;
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out = ".text\n";
-    out.append(".global main\n");
+    string out;
 
     for (auto item :ctx->globalItem()) {
         antlrcpp::Any result = visit(item);
@@ -132,8 +131,8 @@ antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx)
     out.append(expPair.second);
     string address = expPair.first;
 
-    out.append(ASSM::registerToRegister(expPair.first, ASSM::REGISTER_A)).append("\n");
-    out.append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
+    out.append(ASSM::INDENT).append(ASSM::registerToRegister(expPair.first, ASSM::REGISTER_A)).append("\n");
+    out.append(ASSM::INDENT).append(ASSM::registerToAddr(ASSM::REGISTER_A, variableAddress));
 
     return out;
 }
@@ -179,8 +178,8 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     string out;
 
     pair<string, string> expPair = expression->toASM();
-    out.append(expPair.second);
-    out.append(ASSM::registerToRegister(expPair.first, ASSM::REGISTER_RETURN));
+    out.append(ASSM::INDENT).append(expPair.second);
+    out.append(ASSM::INDENT).append(ASSM::registerToRegister(expPair.first, ASSM::REGISTER_RETURN));
 
     return out;
 }
