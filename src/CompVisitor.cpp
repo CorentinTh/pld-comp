@@ -272,7 +272,40 @@ antlrcpp::Any CompVisitor::visitOperationBinary(IFCCParser::OperationBinaryConte
 }
 
 antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext *ctx) {
-    return antlrcpp::Any();
+    string op = ctx->op->getText();
+    ASTNode *node = nullptr;
+
+    if(op == "-"){
+        ASTExpr *expr = new ASTExpr();
+        ASTValue *left = new ASTValue();
+        left->value = "0";
+
+        expr->left = (ASTNode *) left;
+        expr->op = "-";
+        expr->right = visit(ctx->expr()).as<ASTNode *>();
+
+        expr->left->parent = node;
+        expr->right->parent = node;
+
+        node = (ASTNode*) expr;
+    }else if(op == "+"){
+        node = visit(ctx->expr()).as<ASTNode *>();
+    }else if(op == "!"){
+        ASTExpr *expr = new ASTExpr();
+        ASTValue *left = new ASTValue();
+        left->value = "0";
+
+        expr->left = (ASTNode *) left;
+        expr->op = "==";
+        expr->right = visit(ctx->expr()).as<ASTNode *>();
+
+        expr->left->parent = node;
+        expr->right->parent = node;
+
+        node = (ASTNode*) expr;
+    }
+
+    return node;
 }
 
 antlrcpp::Any CompVisitor::visitWhileStmt(IFCCParser::WhileStmtContext *ctx) {

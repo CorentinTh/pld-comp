@@ -15,9 +15,11 @@ public:
     IF = 1, ELSE = 2, WHILE = 3, DO = 4, RETURN = 5, OPEN_PAR = 6, CLOSE_PAR = 7, 
     OPEN_BRACE = 8, CLOSE_BRACE = 9, OPEN_BRACKET = 10, CLOSE_BRACKET = 11, 
     SEMICOLON = 12, COMMA = 13, INT = 14, CHAR = 15, MULT = 16, DIV = 17, 
-    PLUS = 18, MIN = 19, MOD = 20, EQ = 21, NEQ = 22, DEQ = 23, GT = 24, 
-    LT = 25, GE = 26, LE = 27, AND = 28, DAND = 29, OR = 30, DOR = 31, CONST = 32, 
-    IDENTIFIER = 33, OPERATOR = 34, COMMENT = 35, DIRECTIVE = 36, WS = 37
+    PLUS = 18, MIN = 19, MOD = 20, EQ = 21, L_NOT = 22, NEQ = 23, DEQ = 24, 
+    GT = 25, LT = 26, GE = 27, LE = 28, B_AND = 29, L_AND = 30, B_OR = 31, 
+    L_OR = 32, DPLUS = 33, DMIN = 34, MULT_EQ = 35, DIV_EQ = 36, PLUS_EQ = 37, 
+    MIN_EQ = 38, CONST = 39, IDENTIFIER = 40, OPERATOR = 41, COMMENT = 42, 
+    DIRECTIVE = 43, WS = 44
   };
 
   enum {
@@ -307,6 +309,7 @@ public:
 
   class  ExprContext : public antlr4::ParserRuleContext {
   public:
+    bool isInfix;
     ExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
    
     ExprContext() = default;
@@ -352,10 +355,10 @@ public:
     antlr4::tree::TerminalNode *GE();
     antlr4::tree::TerminalNode *LT();
     antlr4::tree::TerminalNode *LE();
-    antlr4::tree::TerminalNode *AND();
-    antlr4::tree::TerminalNode *DAND();
-    antlr4::tree::TerminalNode *OR();
-    antlr4::tree::TerminalNode *DOR();
+    antlr4::tree::TerminalNode *B_AND();
+    antlr4::tree::TerminalNode *L_AND();
+    antlr4::tree::TerminalNode *B_OR();
+    antlr4::tree::TerminalNode *L_OR();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
@@ -376,6 +379,8 @@ public:
     antlr4::Token *op = nullptr;
     ExprContext *expr();
     antlr4::tree::TerminalNode *MIN();
+    antlr4::tree::TerminalNode *PLUS();
+    antlr4::tree::TerminalNode *L_NOT();
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
   };
 
