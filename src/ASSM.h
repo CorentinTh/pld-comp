@@ -43,6 +43,8 @@ public:
 
     static string operation(const string& regLeft, const string& op, const string& regRight);
 
+    static string registerToPushQ(const string& reg);
+
     static string getRegisterL(const string& reg);
 
     static string generateBooleanOperation(const string &keyword, const string &regLeft, const string &regRight);

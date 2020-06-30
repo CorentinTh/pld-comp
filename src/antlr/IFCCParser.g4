@@ -67,7 +67,7 @@ returnAct
     ;
 
 functionCall
-    : functionLabel=IDENTIFIER OPEN_PAR (CONST (COMMA CONST)*)? CLOSE_PAR
+    : functionLabel=IDENTIFIER OPEN_PAR (expr (COMMA expr)*)? CLOSE_PAR
     ;
 
 expr

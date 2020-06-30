@@ -120,6 +120,10 @@ string ASSM::getRegisterL(const string &reg) {
     return "";
 }
 
+string ASSM::registerToPushQ(const string &reg) {
+    return string(INDENT).append("pushq ").append(ASSM::REGISTER_A).append("\n");
+}
+
 //	cmpl	$1, -8(%rbp)
 //	sete	%al
 //	movzbl	%al, %eax

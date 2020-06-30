@@ -17,7 +17,8 @@ public:
     SEMICOLON = 12, COMMA = 13, INT = 14, CHAR = 15, MULT = 16, DIV = 17, 
     PLUS = 18, MIN = 19, MOD = 20, EQ = 21, NEQ = 22, DEQ = 23, GT = 24, 
     LT = 25, GE = 26, LE = 27, AND = 28, DAND = 29, OR = 30, DOR = 31, CONST = 32, 
-    IDENTIFIER = 33, OPERATOR = 34, COMMENT = 35, DIRECTIVE = 36, WS = 37
+    IDENTIFIER = 33, OPERATOR = 34, COMMENT_BLOCK = 35, COMMENT_LINE = 36, 
+    DIRECTIVE = 37, WS = 38
   };
 
   IFCCLexer(antlr4::CharStream *input);

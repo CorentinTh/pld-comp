@@ -198,7 +198,6 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     return out;
 }
 
-
 antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
     ASTIdentifier *node = new ASTIdentifier();
     node->identifier = ctx->IDENTIFIER()->getText();
@@ -324,9 +323,18 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
     string functionLabel = ctx->functionLabel->getText();
     string out = "";
 
-    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
-        const string value = ctx->CONST().at(i)->getText();
-        out.append("pushq $" + value + "\n");
+    for (int i = ctx->expr().size() - 1; i >= 0; i--) {
+        auto tree = ctx->expr().at(i);
+        ASTNode *expression = visit(tree).as<ASTNode *>();
+
+        string out;
+        if (expression->type == EXPR) {
+            out.append(expression->toASM()).append(ASSM::registerToPushQ(ASSM::REGISTER_A));
+        } else {
+            out.append(ASSM::registerToPushQ(expression->toASM()));
+        }
+
+//        out.append("pushq $" + value + "\n");
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");
