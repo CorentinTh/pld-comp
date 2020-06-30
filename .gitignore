@@ -13,3 +13,5 @@ build/*
 # Debug files
 input.*
 a.out
+
+gen

@@ -303,6 +303,19 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
         expr->right->parent = node;
 
         node = (ASTNode*) expr;
+    }else if(op == "~"){
+        ASTExpr *expr = new ASTExpr();
+        ASTValue *left = new ASTValue();
+        left->value = "-1";
+
+        expr->left = (ASTNode *) left;
+        expr->op = "^";
+        expr->right = visit(ctx->expr()).as<ASTNode *>();
+
+        expr->left->parent = node;
+        expr->right->parent = node;
+
+        node = (ASTNode*) expr;
     }
 
     return node;

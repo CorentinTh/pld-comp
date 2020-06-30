@@ -60,8 +60,11 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     string out = string(ASSM::INDENT).append(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
 
     if (op == "*")  out.append(ASSM::INDENT).append("imull ").append(regRight).append(", ").append(writableLeftReg).append("\n");
-    else if (op == "+") out.append(ASSM::INDENT).append(string("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
-    else if (op == "-") out.append(ASSM::INDENT).append(string("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n"));
+    else if (op == "+") out.append(ASSM::INDENT).append("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "-") out.append(ASSM::INDENT).append("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "|") out.append(ASSM::INDENT).append("orl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "&") out.append(ASSM::INDENT).append("andl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if (op == "^") out.append(ASSM::INDENT).append("xorl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
     else if (op == ">") out.append(ASSM::generateBooleanOperation("setg", regRight, writableLeftReg));
     else if (op == "<") out.append(ASSM::generateBooleanOperation("setl", regRight, writableLeftReg));
     else if (op == ">=") out.append(ASSM::generateBooleanOperation("setge", regRight, writableLeftReg));
