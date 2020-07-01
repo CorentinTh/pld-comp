@@ -1,4 +1,4 @@
-name: (FUNCTION) Single argument call with const
+name: (FUNCTION) Single argument call with const with return
 command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
 assets:
 - type: file

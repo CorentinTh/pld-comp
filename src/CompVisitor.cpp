@@ -13,7 +13,8 @@ using namespace std;
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out = "";
+    string out = ".text\n";
+    out.append(".global main\n");
     for (auto item :ctx->globalItem()) {
         antlrcpp::Any result = visit(item);
 
@@ -32,8 +33,7 @@ antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
 antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     //Create the label
     string functionLabel = ctx->functionLabel->getText();
-    string out = ".text\n";
-    out.append(".global ").append(functionLabel + "\n");
+    string out;
     out.append(functionLabel + ":\n");
 
     //Insert scope to the stack
@@ -357,12 +357,10 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
         auto tree = ctx->expr().at(i);
         ASTNode *expression = visit(tree).as<ASTNode *>();
 
-        if (expression->type == EXPR) {
-            //TODO: fix this
-            out.append(expression->toASM().second).append(ASSM::registerToPushQ(ASSM::REGISTER_A));
-        } else {
-            out.append(ASSM::asmToPushQ(expression->toASM().second));
-        }
+        pair<string, string> expPair = expression->toASM();
+
+        out.append(expPair.second).append("\n");
+        out.append(ASSM::asmToPushQ(expPair.first));
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");
