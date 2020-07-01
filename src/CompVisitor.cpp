@@ -47,7 +47,7 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     if (ctx->IDENTIFIER().size() > 0) {
         //Add params into variable Map
         int paramOffset = 4;
-        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+        for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
             string prefix = variableManager->generatePrefix();
             string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
             string variableAddress = to_string(paramOffset);
@@ -62,13 +62,13 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     variableManager->popScope();
 
     //Generate the Epilogue
-    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
+//    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
     out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
 
     int varAmount = variableManager->functionVariableAmount(functionLabel);
-    int stackSize = (varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
+    int stackSize = ((varAmount / 4) + 1) * 16;
     int index;
     while ((index = out.find("{stackSize}")) != string::npos) {
         out.replace(index, 11, "$" + to_string(stackSize));
@@ -369,3 +369,4 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
 
     return out;
 }
+

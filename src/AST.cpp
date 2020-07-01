@@ -17,12 +17,7 @@
 // 3   4 5   6
 //
 
-// The graph browsing algorithm is post-order
-// First, we browse all the left nodes
-// Next, we browse all the right nodes
-// Finally, we handle the current node
 
-// TODO: simplify this by pushing the specific logic of ASTValue and ASTIdentifier dedicated toAST method (use a new "regOut" argument)
 pair<string, string> ASTExpr::toASM() {
     string result;
     string tmpVariable = TmpVariable::getVariable();
@@ -40,9 +35,6 @@ pair<string, string> ASTExpr::toASM() {
 
         result.append(ASSM::operation(leftVar, this->op, rightVar, tmpVariable));
 
-//        Pas si simple de supprimer la variable tmp...
-//        TmpVariable::free(leftVar);
-//        TmpVariable::free(rightVar);
     } else {
         tmpVariable = this->toASM().first;
     }
