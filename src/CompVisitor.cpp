@@ -44,6 +44,9 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
     out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
 
+    const int REG_COUNT = 6;
+    string regs[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
     if (ctx->IDENTIFIER().size() > 0) {
         //Add params into variable Map
         int paramOffset = 4;
@@ -53,6 +56,8 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
             string variableAddress = to_string(paramOffset);
             variableManager->putVariableAtAddress(variableName, variableAddress);
             paramOffset += 4;
+
+            out.append(ASSM::INDENT).append(ASSM::registerToAddr(regs[i-1], variableAddress)).append("\n");
         }
     }
 
@@ -353,14 +358,18 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
     string functionLabel = ctx->functionLabel->getText();
     string out = "";
 
-    for (int i = ctx->expr().size() - 1; i >= 0; i--) {
+    const int REG_COUNT = 6;
+    string regs[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
+    int regCpt = 0;
+    for (int i = ctx->expr().size() - 1; i >= 0; i--, regCpt++) {
         auto tree = ctx->expr().at(i);
         ASTNode *expression = visit(tree).as<ASTNode *>();
 
         pair<string, string> expPair = expression->toASM();
 
         out.append(expPair.second).append("\n");
-        out.append(ASSM::asmToPushQ(expPair.first));
+        out.append(ASSM::registerToRegister(expPair.first, regs[regCpt])).append("\n");
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");

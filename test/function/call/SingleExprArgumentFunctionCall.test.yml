@@ -17,4 +17,4 @@ assets:
 - type: file
   name: exec
 expect:
-  status: 3
+  status: 6
