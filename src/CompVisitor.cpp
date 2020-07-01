@@ -67,13 +67,13 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     variableManager->popScope();
 
     //Generate the Epilogue
-//    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
-    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
+    out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
+//    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
 
     int varAmount = variableManager->functionVariableAmount(functionLabel);
-    int stackSize = ((varAmount / 4) + 1) * 16;
+    int stackSize = varAmount*4;
     int index;
     while ((index = out.find("{stackSize}")) != string::npos) {
         out.replace(index, 11, "$" + to_string(stackSize));
