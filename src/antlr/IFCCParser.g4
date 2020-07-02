@@ -97,6 +97,7 @@ expr returns[bool isInfix]
     | CONST                    # const
     | IDENTIFIER               # identifier
     | functionCall            # functionCallExpr
+    | CHAR_LIT                 # charLiteral
     ;
 
 
