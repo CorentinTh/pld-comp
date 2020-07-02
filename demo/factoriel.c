@@ -3,6 +3,20 @@ int fact(int n) {
     else return (n * fact(n - 1));
 }
 
+int print(int n) {
+    if (n < 0) {
+        putchar('-');
+        n = -n;
+    }
+
+    if (n/10) {
+        print(n/10);
+    }
+
+    putchar(n%10 + '0');
+}
+
+
 int main() {
     putchar('F');
     putchar('a');
@@ -34,5 +48,9 @@ int main() {
     }
 
     int result = fact(nb);
+
+    print(result);
+    putchar(10);
+
     return result;
 }
