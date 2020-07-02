@@ -1,3 +1,14 @@
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
+
 #include <iostream>
 #include <cstdlib>
 
@@ -10,10 +21,10 @@ using namespace antlr4;
 using namespace std;
 
 string helpMessage = "A compiler for a subset of the C language using C++ and Antlr4.\n"
-                           "Usage : {@} <inputFileName> <option> [<args>]\n\n"
-                           "Commandes:\n"
-                           "\t-h, --help\tshow this message\n"
-                           "\t-o\t\tspecifie a file to write the output\n";
+                     "Usage : {@} <inputFileName> <option> [<args>]\n\n"
+                     "Commandes:\n"
+                     "\t-h, --help\tshow this message\n"
+                     "\t-o\t\tspecifie a file to write the output\n";
 
 const string noInputFile = "No input file.";
 const string badInputFile = "Bad input file.";
@@ -21,8 +32,11 @@ const string badInputFile = "Bad input file.";
 class MyErrorListener : public BaseErrorListener {
 public:
     MyErrorListener() { error = false; }
+
     bool Error() { return error; }
-    virtual void syntaxError(Recognizer *recognizer, Token * offendingSymbol, size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr e)  {
+
+    virtual void syntaxError(Recognizer *recognizer, Token *offendingSymbol, size_t line, size_t charPositionInLine,
+                             const std::string &msg, std::exception_ptr e) {
         cout << "Error on position " << line << ":" << charPositionInLine << endl;
         error = true;
     }
@@ -31,19 +45,19 @@ protected:
     bool error;
 };
 
-char* getCommandOption(char ** begin, char ** end, const std::string & option) {
-    char ** itr = std::find(begin, end, option);
+char *getCommandOption(char **begin, char **end, const std::string &option) {
+    char **itr = std::find(begin, end, option);
     if (itr != end && ++itr != end) {
         return *itr;
     }
     return 0;
 }
 
-bool commandOptionExists(char ** begin, char ** end, const std::string & option) {
+bool commandOptionExists(char **begin, char **end, const std::string &option) {
     return std::find(begin, end, option) != end;
 }
 
-int main(int argn, char * argv[]) {
+int main(int argn, char *argv[]) {
     stringstream in;
     if (argn < 2) {
         cerr << noInputFile << endl;
@@ -72,15 +86,15 @@ int main(int argn, char * argv[]) {
         parser.removeErrorListeners();
         parser.addErrorListener(&errorlistener);
 
-        tree::ParseTree* tree = parser.axiom();
-        if(errorlistener.Error()) {
+        tree::ParseTree *tree = parser.axiom();
+        if (errorlistener.Error()) {
             return 1;
         }
 
         CompVisitor visitor;
         string assembly = visitor.visit(tree).as<string>();
 
-        char * outFileName = getCommandOption(argv, argv + argn, "-o");
+        char *outFileName = getCommandOption(argv, argv + argn, "-o");
 
         if (outFileName) {
             std::ofstream out(outFileName);

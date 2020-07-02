@@ -1,3 +1,14 @@
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
+
 #include <string>
 #include <vector>
 #include "CompVisitor.h"
@@ -6,7 +17,6 @@
 #include "Logger.h"
 #include "VariableManager.h"
 #include "TagManager.h"
-#include "TmpVariable.h"
 
 using namespace std;
 
@@ -57,7 +67,7 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
             variableManager->putVariableAtAddress(variableName, variableAddress);
             paramOffset += 4;
 
-            out.append(ASSM::INDENT).append(ASSM::registerToAddr(regs[i-1], variableAddress)).append("\n");
+            out.append(ASSM::INDENT).append(ASSM::registerToAddr(regs[i - 1], variableAddress)).append("\n");
         }
     }
 
@@ -68,12 +78,11 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
 
     //Generate the Epilogue
     out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
-//    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
 
     int varAmount = variableManager->functionVariableAmount(functionLabel);
-    int stackSize = varAmount*4;
+    int stackSize = varAmount * 4;
     int index;
     while ((index = out.find("{stackSize}")) != string::npos) {
         out.replace(index, 11, "$" + to_string(stackSize));
@@ -107,7 +116,6 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     out.append(expPair.second);
     string address = expPair.first;
 
-//    TmpVariable::free(address);
     string cleanAddr = address.substr(1, address.size() - 7);
     variableManager->putVariableAtAddress(variableName, cleanAddr);
 
@@ -207,7 +215,6 @@ antlrcpp::Any CompVisitor::visitConst(IFCCParser::ConstContext *ctx) {
 }
 
 antlrcpp::Any CompVisitor::visitParenthesis(IFCCParser::ParenthesisContext *ctx) {
-    // TODO: handle parenthesis
     return visit(ctx->expr()).as<ASTNode *>();
 }
 
@@ -284,7 +291,7 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
     string op = ctx->op->getText();
     ASTNode *node = nullptr;
 
-    if(op == "-"){
+    if (op == "-") {
         ASTExpr *expr = new ASTExpr();
         ASTValue *left = new ASTValue();
         left->value = "0";
@@ -296,10 +303,10 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
         expr->left->parent = node;
         expr->right->parent = node;
 
-        node = (ASTNode*) expr;
-    }else if(op == "+"){
+        node = (ASTNode *) expr;
+    } else if (op == "+") {
         node = visit(ctx->expr()).as<ASTNode *>();
-    }else if(op == "!"){
+    } else if (op == "!") {
         ASTExpr *expr = new ASTExpr();
         ASTValue *left = new ASTValue();
         left->value = "0";
@@ -311,8 +318,8 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
         expr->left->parent = node;
         expr->right->parent = node;
 
-        node = (ASTNode*) expr;
-    }else if(op == "~"){
+        node = (ASTNode *) expr;
+    } else if (op == "~") {
         ASTExpr *expr = new ASTExpr();
         ASTValue *left = new ASTValue();
         left->value = "-1";
@@ -324,7 +331,7 @@ antlrcpp::Any CompVisitor::visitOperationUnary(IFCCParser::OperationUnaryContext
         expr->left->parent = node;
         expr->right->parent = node;
 
-        node = (ASTNode*) expr;
+        node = (ASTNode *) expr;
     }
 
     return node;

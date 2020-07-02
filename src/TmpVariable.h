@@ -1,6 +1,13 @@
-//
-// Created by corentin on 30/06/2020.
-//
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #ifndef PLD_COMP_TMPVARIABLE_H
 #define PLD_COMP_TMPVARIABLE_H
@@ -13,18 +20,18 @@
 
 class TmpVariable {
 public:
-    static string getVariable(){
+    static string getVariable() {
         VariableManager *variableManager = VariableManager::getInstance();
         const string prefix = variableManager->generatePrefix();
 
-        string address =  ASSM::addrRegister(variableManager->getNextAddress());
+        string address = ASSM::addrRegister(variableManager->getNextAddress());
         string id = prefix + "-tmp-" + address;
         variableManager->putVariableAtAddress(id, address);
 
         return address;
     }
 
-    static void free(string address){
+    static void free(string address) {
         VariableManager *variableManager = VariableManager::getInstance();
 
         string id = "-tmp-" + address;

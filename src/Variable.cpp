@@ -1,6 +1,13 @@
-//
-// Created by Lucca Vidal on 6/15/20.
-//
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #include "Variable.h"
 

@@ -1,3 +1,14 @@
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
+
 #include "antlr/IFCCParserVisitor.h"
 
 class CompVisitor : public IFCCParserVisitor {

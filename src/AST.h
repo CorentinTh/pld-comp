@@ -1,3 +1,13 @@
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #ifndef PLD_COMP_AST_H
 #define PLD_COMP_AST_H

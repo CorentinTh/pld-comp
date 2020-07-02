@@ -1,6 +1,13 @@
-//
-// Created by corentin on 25/06/2020.
-//
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #ifndef PLD_COMP_TAGMANAGER_H
 #define PLD_COMP_TAGMANAGER_H

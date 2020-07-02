@@ -1,7 +1,16 @@
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #include "AST.h"
 #include "ASSM.h"
-#include "Logger.h"
 #include "VariableManager.h"
 #include "TmpVariable.h"
 
@@ -84,7 +93,8 @@ pair<string, string> ASTIdentifier::toASM() {
 pair<string, string> ASTFunction::toASM() {
     string tmpVariable = TmpVariable::getVariable();
     string result = this->assm;
-    string resultAddress = string(ASSM::INDENT).append(ASSM::registerToRegister(ASSM::REGISTER_RETURN, tmpVariable).append("\n"));
+    string resultAddress = string(ASSM::INDENT).append(
+            ASSM::registerToRegister(ASSM::REGISTER_RETURN, tmpVariable).append("\n"));
     result.append(resultAddress);
 
     pair<string, string> out(tmpVariable, result);

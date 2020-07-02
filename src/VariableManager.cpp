@@ -1,6 +1,13 @@
-//
-// Created by Lucca Vidal on 6/15/20.
-//
+/**
+ *      PLD-COMP - INSA Lyon
+ *           June 2020
+ *
+ *      - Balthazar Frolin
+ *      - Bastien Marsaud
+ *      - Marc Meillac
+ *      - Corentin Thomasset
+ *      - Lucca Paffi
+ */
 
 #include "VariableManager.h"
 
@@ -17,8 +24,8 @@ string VariableManager::getNextAddress() {
 
     int varAmount = 0;
     map<string, string>::iterator it;
-    for(it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
-        if((*it).first.rfind(functionName, 0) == 0) {
+    for (it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
+        if ((*it).first.rfind(functionName, 0) == 0) {
             varAmount++;
         }
     }
@@ -41,12 +48,12 @@ void VariableManager::popScope() {
 string VariableManager::generatePrefix() {
     string prefix = "";
     vector<string>::iterator it;
-    for(it = scopeStack.begin(); it != scopeStack.end(); it++) {
+    for (it = scopeStack.begin(); it != scopeStack.end(); it++) {
         string currentScope = *it;
-        prefix.append(currentScope+":");
+        prefix.append(currentScope + ":");
     }
-    if(scopeStack.size() != 1) {
-        return prefix.substr(0, prefix.size()-1); //remove last _
+    if (scopeStack.size() != 1) {
+        return prefix.substr(0, prefix.size() - 1); //remove last _
     }
     return prefix;
 }
@@ -54,8 +61,8 @@ string VariableManager::generatePrefix() {
 int VariableManager::functionVariableAmount(string functionName) {
     int varAmount = 0;
     map<string, string>::iterator it;
-    for(it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
-        if((*it).first.rfind(functionName, 0) == 0) {
+    for (it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
+        if ((*it).first.rfind(functionName, 0) == 0) {
             varAmount++;
         }
     }
@@ -63,6 +70,6 @@ int VariableManager::functionVariableAmount(string functionName) {
     return varAmount;
 }
 
-void VariableManager::removeVariable(const string& identifier) {
+void VariableManager::removeVariable(const string &identifier) {
     this->variableAddressMap.erase(identifier);
 }
