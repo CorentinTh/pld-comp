@@ -1,3 +1,20 @@
+int askNumber() {
+    int exit = 0;
+    int input = 0;
+    int nb = 0;
+    while(exit == 0) {
+        input = getchar();
+        if(input == 10) {
+            exit = 1;
+        } else {
+            input = input - '0';
+            nb = nb * 10 + input;
+        }
+    }
+
+    return nb;
+}
+
 int main() {
     putchar('Q');
     putchar('u');
@@ -28,17 +45,7 @@ int main() {
     int exit = 0;
 
     while(guess != nb) {
-        guess = 0;
-        exit = 0;
-        while(exit == 0) {
-            input = getchar();
-            if(input == 10) {
-                exit = 1;
-            } else {
-                input = input - '0';
-                guess = guess * 10 + input;
-            }
-        }
+        guess = askNumber();
 
         if(guess < nb) {
             putchar('C');

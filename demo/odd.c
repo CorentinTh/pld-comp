@@ -1,3 +1,20 @@
+int askNumber() {
+    int exit = 0;
+    int input = 0;
+    int nb = 0;
+    while(exit == 0) {
+        input = getchar();
+        if(input == 10) {
+            exit = 1;
+        } else {
+            input = input - '0';
+            nb = nb * 10 + input;
+        }
+    }
+
+    return nb;
+}
+
 int main() {
     putchar('D');
     putchar('o');
@@ -19,19 +36,7 @@ int main() {
     putchar(':');
     putchar(10);
 
-
-    int exit = 0;
-    int input = 0;
-    int nb = 0;
-    while(exit == 0) {
-        input = getchar();
-        if(input == 10) {
-            exit = 1;
-        } else {
-            input = input - '0';
-            nb = nb * 10 + input;
-        }
-    }
+    int nb = askNumber();
 
     if(nb & 1) {
         putchar('N');
