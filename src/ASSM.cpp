@@ -60,7 +60,22 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     string out = string(ASSM::INDENT).append(ASSM::registerToRegister(regLeft, writableLeftReg)).append("\n");
 
     if (op == "*")  out.append(ASSM::INDENT).append("imull ").append(regRight).append(", ").append(writableLeftReg).append("\n");
-    else if (op == "+") out.append(ASSM::INDENT).append("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
+    else if(op == "/") {
+        if(regLeft != ASSM::REGISTER_A) {
+/*            out.append(ASSM::registerToRegister(ASSM::REGISTER_A, ASSM::REGISTER_D)).append("\n").append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_B, ASSM::REGISTER_A)).append("\n").append(ASSM::INDENT)
+                    .append(ASSM::registerToRegister(ASSM::REGISTER_D, REGISTER_B)).append("\n");*/
+            out.append(ASSM::INDENT).append(ASSM::registerToRegister(regLeft, ASSM::REGISTER_A)).append("\n");
+        }
+
+        if(regRight != ASSM::REGISTER_B) {
+            out.append(ASSM::INDENT).append(ASSM::registerToRegister(regRight, ASSM::REGISTER_B)).append("\n");
+        }
+
+        out.append(ASSM::INDENT).append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n");
+        out.append(ASSM::INDENT).append("idiv ").append(ASSM::REGISTER_B).append("\n");
+        out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, writableLeftReg)).append("\n");
+    } else if (op == "+") out.append(ASSM::INDENT).append("addl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
     else if (op == "-") out.append(ASSM::INDENT).append("subl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
     else if (op == "|") out.append(ASSM::INDENT).append("orl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
     else if (op == "&") out.append(ASSM::INDENT).append("andl ").append(regRight).append(", ").append(writableLeftReg).append("\n");
