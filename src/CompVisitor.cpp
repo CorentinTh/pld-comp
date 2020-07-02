@@ -13,8 +13,8 @@ using namespace std;
 VariableManager *variableManager = VariableManager::getInstance();
 
 antlrcpp::Any CompVisitor::visitAxiom(IFCCParser::AxiomContext *ctx) {
-    string out;
-
+    string out = ".text\n";
+    out.append(".global main\n");
     for (auto item :ctx->globalItem()) {
         antlrcpp::Any result = visit(item);
 
@@ -33,8 +33,7 @@ antlrcpp::Any CompVisitor::visitGlobalItem(IFCCParser::GlobalItemContext *ctx) {
 antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     //Create the label
     string functionLabel = ctx->functionLabel->getText();
-    string out = ".text\n";
-    out.append(".global ").append(functionLabel + "\n");
+    string out;
     out.append(functionLabel + ":\n");
 
     //Insert scope to the stack
@@ -45,15 +44,20 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
     out.append(ASSM::INDENT + "movq %rsp, %rbp\n");
     out.append(ASSM::INDENT + "subq {stackSize}, %rsp\n");
 
+    const int REG_COUNT = 6;
+    string regs[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
     if (ctx->IDENTIFIER().size() > 0) {
         //Add params into variable Map
         int paramOffset = 4;
-        for (int i = 0; i < ctx->IDENTIFIER().size(); i++) {
+        for (int i = 1; i < ctx->IDENTIFIER().size(); i++) {
             string prefix = variableManager->generatePrefix();
             string variableName = prefix.append(ctx->IDENTIFIER().at(i)->getText());
             string variableAddress = to_string(paramOffset);
             variableManager->putVariableAtAddress(variableName, variableAddress);
             paramOffset += 4;
+
+            out.append(ASSM::INDENT).append(ASSM::registerToAddr(regs[i-1], variableAddress)).append("\n");
         }
     }
 
@@ -64,12 +68,12 @@ antlrcpp::Any CompVisitor::visitFunction(IFCCParser::FunctionContext *ctx) {
 
     //Generate the Epilogue
     out.append(ASSM::INDENT + "addq {stackSize}, %rsp\n");
-    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
+//    out.append(ASSM::INDENT + "movq %rbp, %rsp\n");
     out.append(ASSM::INDENT + "popq %rbp\n");
     out.append(ASSM::INDENT + "ret\n");
 
     int varAmount = variableManager->functionVariableAmount(functionLabel);
-    int stackSize = (varAmount / 4 + (varAmount % 4 == 0 ? 0 : 1)) * 16;
+    int stackSize = varAmount*4;
     int index;
     while ((index = out.find("{stackSize}")) != string::npos) {
         out.replace(index, 11, "$" + to_string(stackSize));
@@ -103,7 +107,7 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
     out.append(expPair.second);
     string address = expPair.first;
 
-    TmpVariable::free(address);
+//    TmpVariable::free(address);
     string cleanAddr = address.substr(1, address.size() - 7);
     variableManager->putVariableAtAddress(variableName, cleanAddr);
 
@@ -184,10 +188,15 @@ antlrcpp::Any CompVisitor::visitReturnAct(IFCCParser::ReturnActContext *ctx) {
     return out;
 }
 
-
 antlrcpp::Any CompVisitor::visitIdentifier(IFCCParser::IdentifierContext *ctx) {
     ASTIdentifier *node = new ASTIdentifier();
     node->identifier = ctx->IDENTIFIER()->getText();
+    return (ASTNode *) node;
+}
+
+antlrcpp::Any CompVisitor::visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *ctx) {
+    ASTFunction *node = new ASTFunction();
+    node->assm = visitFunctionCall(ctx->functionCall()).as<string>();
     return (ASTNode *) node;
 }
 
@@ -349,9 +358,18 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
     string functionLabel = ctx->functionLabel->getText();
     string out = "";
 
-    for (int i = ctx->CONST().size() - 1; i >= 0; i--) {
-        const string value = ctx->CONST().at(i)->getText();
-        out.append("pushq $" + value + "\n");
+    const int REG_COUNT = 6;
+    string regs[6] = {"%edi", "%esi", "%edx", "%ecx", "%r8d", "%r9d"};
+
+    int regCpt = 0;
+    for (int i = ctx->expr().size() - 1; i >= 0; i--, regCpt++) {
+        auto tree = ctx->expr().at(i);
+        ASTNode *expression = visit(tree).as<ASTNode *>();
+
+        pair<string, string> expPair = expression->toASM();
+
+        out.append(expPair.second).append("\n");
+        out.append(ASSM::INDENT).append(ASSM::registerToRegister(expPair.first, regs[regCpt])).append("\n");
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");

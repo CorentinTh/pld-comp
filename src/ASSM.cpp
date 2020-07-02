@@ -71,6 +71,20 @@ string ASSM::operation(string regLeft, string op, string regRight, string regOut
     else if (op == "<=") out.append(ASSM::generateBooleanOperation("setle", regRight, writableLeftReg));
     else if (op == "==") out.append(ASSM::generateBooleanOperation("sete", regRight, writableLeftReg));
     else if (op == "!=") out.append(ASSM::generateBooleanOperation("setne", regRight, writableLeftReg));
+    else if(op == "/" || op == "%") {
+        if(regLeft != ASSM::REGISTER_A) {
+            out.append(ASSM::INDENT).append(ASSM::registerToRegister(regLeft, ASSM::REGISTER_A)).append("\n");
+        }
+        if(regRight != ASSM::REGISTER_B) {
+            out.append(ASSM::INDENT).append(ASSM::registerToRegister(regRight, ASSM::REGISTER_B)).append("\n");
+        }
+        out.append(ASSM::INDENT).append(ASSM::constToRegister("0", ASSM::REGISTER_D)).append("\n");
+        out.append(ASSM::INDENT).append("idivl ").append(ASSM::REGISTER_B).append("\n");
+
+        if(op == "/") {
+            out.append(ASSM::INDENT).append(registerToRegister(ASSM::REGISTER_A, writableLeftReg)).append("\n");
+        }
+    }
 
     out.append(ASSM::INDENT).append(ASSM::registerToRegister(writableLeftReg, regOut)).append("\n");
 
@@ -91,6 +105,15 @@ string ASSM::getRegisterL(const string &reg) {
     if (reg == REGISTER_D) return REGISTER_D_L;
 
     return "";
+}
+
+//TODO: delete this (as useless)
+string ASSM::registerToPushQ(const string &reg) {
+    return string(INDENT).append("pushq ").append(ASSM::REGISTER_A).append("\n");
+}
+
+string ASSM::asmToPushQ(const string &assm) {
+    return string(INDENT).append("pushq ").append(assm).append("\n");
 }
 
 //	cmpl	$1, -8(%rbp)

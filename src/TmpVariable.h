@@ -15,9 +15,10 @@ class TmpVariable {
 public:
     static string getVariable(){
         VariableManager *variableManager = VariableManager::getInstance();
+        const string prefix = variableManager->generatePrefix();
 
         string address =  ASSM::addrRegister(variableManager->getNextAddress());
-        string id = "-tmp-" + address;
+        string id = prefix + "-tmp-" + address;
         variableManager->putVariableAtAddress(id, address);
 
         return address;

@@ -46,9 +46,10 @@ PLUS_EQ : '+=' ;
 MIN_EQ  : '-=' ;
 
 CONST : [0-9]+ ;
-CHAR_LIT: '\''[a-zA-Z_]'\'';
+CHAR_LIT: '\''.'\'';
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]* ;
 OPERATOR : [+\-*/];
-COMMENT : '/*' .*? '*/' -> skip ;
+COMMENT_BLOCK : '/*' .*? '*/' -> skip ;
+COMMENT_LINE : '//' .*? '\n' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);

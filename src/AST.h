@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <vector>
+#include <antlr/IFCCParser.h>
 
 using namespace std;
 
@@ -26,7 +28,8 @@ struct AST;
 enum NodeType {
     VALUE,
     EXPR,
-    IDENTIFIER
+    IDENTIFIER,
+    FUNCTION
 };
 
 class ASTNode {
@@ -67,6 +70,16 @@ public :
     ASTIdentifier();
 
     string identifier;
+
+    pair<string, string> toASM() override;
+};
+
+
+class ASTFunction : ASTNode {
+public:
+    ASTFunction();
+
+    string assm;
 
     pair<string, string> toASM() override;
 };

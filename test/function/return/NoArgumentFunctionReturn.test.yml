@@ -1,0 +1,20 @@
+name: (FUNCTION) No argument function return
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+- type: file
+  name: input.c
+  content: |-
+    int foo() {
+      return 10;
+    }
+
+    int main() {
+      int a = foo();
+      return a;
+    }
+- type: file
+  name: asm.s
+- type: file
+  name: exec
+expect:
+  status: 10

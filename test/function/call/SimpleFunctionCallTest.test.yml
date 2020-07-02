@@ -1,0 +1,22 @@
+name: (FUNCTION) No argument call with variable
+command: ./cmake-build-debug/pld-comp {input.c} > {asm.s} ; gcc {asm.s} -o {exec} ; {exec}
+assets:
+- type: file
+  name: input.c
+  content: |-
+    int foo() {
+      int a = 3;
+      a = a + 1;
+    }
+
+    int main() {
+      int a = 3;
+      foo();
+      return a;
+    }
+- type: file
+  name: asm.s
+- type: file
+  name: exec
+expect:
+  status: 3

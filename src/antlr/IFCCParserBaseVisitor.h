@@ -87,6 +87,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitCharLiteral(IFCCParser::CharLiteralContext *ctx) override {
     return visitChildren(ctx);
   }

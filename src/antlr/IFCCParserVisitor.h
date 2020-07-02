@@ -55,6 +55,8 @@ public:
 
     virtual antlrcpp::Any visitConst(IFCCParser::ConstContext *context) = 0;
 
+    virtual antlrcpp::Any visitFunctionCallExpr(IFCCParser::FunctionCallExprContext *context) = 0;
+
     virtual antlrcpp::Any visitCharLiteral(IFCCParser::CharLiteralContext *context) = 0;
 
     virtual antlrcpp::Any visitOperationBinary(IFCCParser::OperationBinaryContext *context) = 0;

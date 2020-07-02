@@ -13,7 +13,17 @@ string VariableManager::getAddress(string variableName) {
 }
 
 string VariableManager::getNextAddress() {
-    return to_string((variableAddressMap.size() + 1) * 4);
+    string functionName = scopeStack.back();
+
+    int varAmount = 0;
+    map<string, string>::iterator it;
+    for(it = variableAddressMap.begin(); it != variableAddressMap.end(); it++) {
+        if((*it).first.rfind(functionName, 0) == 0) {
+            varAmount++;
+        }
+    }
+
+    return to_string((varAmount + 1) * 4);
 }
 
 void VariableManager::putVariableAtAddress(string variableName, string variableAddress) {
