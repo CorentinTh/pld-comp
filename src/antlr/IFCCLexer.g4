@@ -46,6 +46,7 @@ PLUS_EQ : '+=' ;
 MIN_EQ  : '-=' ;
 
 CONST : [0-9]+ ;
+CHAR_LIT: '\''[a-zA-Z_]'\'';
 IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]* ;
 OPERATOR : [+\-*/];
 COMMENT_BLOCK : '/*' .*? '*/' -> skip ;

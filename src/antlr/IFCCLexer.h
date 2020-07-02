@@ -18,9 +18,9 @@ public:
     PLUS = 18, MIN = 19, MOD = 20, EQ = 21, L_NOT = 22, B_NOT = 23, NEQ = 24, 
     DEQ = 25, GT = 26, LT = 27, GE = 28, LE = 29, B_AND = 30, L_AND = 31, 
     B_OR = 32, L_OR = 33, X_OR = 34, DPLUS = 35, DMIN = 36, MULT_EQ = 37, 
-    DIV_EQ = 38, PLUS_EQ = 39, MIN_EQ = 40, CONST = 41, IDENTIFIER = 42, 
-    OPERATOR = 43, COMMENT_BLOCK = 44, COMMENT_LINE = 45, DIRECTIVE = 46, 
-    WS = 47
+    DIV_EQ = 38, PLUS_EQ = 39, MIN_EQ = 40, CONST = 41, CHAR_LIT = 42, IDENTIFIER = 43, 
+    OPERATOR = 44, COMMENT_BLOCK = 45, COMMENT_LINE = 46, DIRECTIVE = 47, 
+    WS = 48
   };
 
   IFCCLexer(antlr4::CharStream *input);

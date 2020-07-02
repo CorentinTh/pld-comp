@@ -91,6 +91,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitCharLiteral(IFCCParser::CharLiteralContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitOperationBinary(IFCCParser::OperationBinaryContext *ctx) override {
     return visitChildren(ctx);
   }
