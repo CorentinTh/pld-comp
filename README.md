@@ -1,5 +1,6 @@
 # PLD Compilateur
 ![C/C++ CI](https://github.com/CorentinTh/pld-comp/workflows/C/C++%20CI/badge.svg)
+Bare C to ASM compiler in CPP (school project).
 
 ## Description
 
@@ -7,21 +8,26 @@ This project has been made during our fourth year at INSA Lyon
 The goal of the project was to make a compiler for a subset of the C language using C++ and Antlr4
 
 For now our compilator supports the following features :
-* Main function
-* Value return (only integer)
-* Multiple variable declaration and affectation (only integer)
-* Arithmetics
+ * Arithmetic operations 
+   * Binary operators: `*`, `/`, `+`, `-`, `%`, `&`, `|`, `^`
+   * Bool operators: `==`, `!=`, `>`, `<`, `>=`, `<=`
+   * Unary operators: `-`, `+`, `!` (not bool), `~` (not bitwise)
+ * Multiple variable declaration and affectation
+ * IF / ELSE (with or without block body)
+ * WHILE / DO-WHILE (with or without block body)
+ * Procedure and functions up to 6 arguments
+ * `getchar` / `putchar`
 
 The project also uses unit testing and continuous integration to prevent regressions.
 
 ## Team and Organisation
 
 This is a group project made by :
-* Corentin Thomasset
-* Bastien Marsaud
-* Lucca Paffi
-* Marc Meillac
-* Balthazar Frolin
+ - Balthazar Frolin
+ - Bastien Marsaud
+ - Marc Meillac
+ - Corentin Thomasset
+ - Lucca Paffi
 
 We mostly work with pair/group programming doing iterative works and building our compiler step by step.
 We use Github Projects to track bugs and features status. The fact that it is fully integrated with Github allow us to work faster with one single account.
@@ -30,11 +36,31 @@ We use Github Projects to track bugs and features status. The fact that it is fu
 
 In order to use our compiler follow these steps :
 * Write your own program using the basic C grammar (for the implemented features)
-* Execute our compiler (see "[Using command line](#using-command-line)")
-  * If there are syntax issues, errors will be printed in the console output
-  * Else you will get your working binary file
+* Compile our compiler (see "[Using command line](#using-command-line)")
 
-Now you can run your binary file on your computer and see your program working.
+Now you can run against any C program .
+```
+$ ./pld-comp myFile.c -o myResult.s
+```
+
+Cli usage :
+```
+$ ./pld-comp -h
+A compiler for a subset of the C language using C++ and Antlr4.
+Usage : ./pld-comp <inputFileName> <option> [<args>]
+
+Commandes:
+        -h, --help      show this message
+        -o              specifie a file to write the output
+```
+
+A set of demo of complex working C programs is available in the [demo](./demo) folder.
+
+## Links
+ * **Source code**: https://github.com/CorentinTh/pld-comp  
+ * **Project management kanban**: https://github.com/CorentinTh/pld-comp/projects/1  
+ * **CI pipeline**: https://github.com/CorentinTh/pld-comp/actions  
+ * **UT framework**: https://github.com/CorentinTh/comest  
 
 ## Code Description
 
