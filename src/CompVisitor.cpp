@@ -369,7 +369,7 @@ antlrcpp::Any CompVisitor::visitFunctionCall(IFCCParser::FunctionCallContext *ct
         pair<string, string> expPair = expression->toASM();
 
         out.append(expPair.second).append("\n");
-        out.append(ASSM::registerToRegister(expPair.first, regs[regCpt])).append("\n");
+        out.append(ASSM::INDENT).append(ASSM::registerToRegister(expPair.first, regs[regCpt])).append("\n");
     }
 
     out.append(ASSM::INDENT + "call " + functionLabel + "\n");
