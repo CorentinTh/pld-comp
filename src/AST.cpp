@@ -79,7 +79,6 @@ pair<string, string> ASTValue::toASM() {
 
 pair<string, string> ASTIdentifier::toASM() {
     VariableManager *variableManager = VariableManager::getInstance();
-    //TODO check existence with function identifier
     string baseVariableName = this->identifier;
     string prefix = variableManager->generatePrefix();
     string variableName = prefix.append(baseVariableName);

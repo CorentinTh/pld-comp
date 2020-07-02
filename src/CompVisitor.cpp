@@ -123,7 +123,6 @@ antlrcpp::Any CompVisitor::visitDeclarationAffectation(IFCCParser::DeclarationAf
 }
 
 antlrcpp::Any CompVisitor::visitAffectation(IFCCParser::AffectationContext *ctx) {
-    // TODO: better expression parsing
     const string prefix = variableManager->generatePrefix();
     const string baseVariableName = ctx->IDENTIFIER()->getText();
     const string variableName = prefix + baseVariableName;
